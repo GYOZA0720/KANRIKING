@@ -6,11 +6,15 @@
     <title>KANRI KING - 皇帝のオールインワンダッシュボード</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@800&display=swap">
     <script>
         const savedTheme = localStorage.getItem('kk_theme') || 'slate';
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        king: ['"Shippori Mincho"', 'serif']
+                    },
                     colors: {
                         theme: {
                             500: savedTheme === 'purple' ? '#a855f7' : savedTheme === 'emerald' ? '#10b981' : savedTheme === 'blue' ? '#3b82f6' : '#6366f1',
@@ -80,6 +84,13 @@
 
             <!-- ================= 1. ホーム画面 ================= -->
             <div id="tab-home" class="space-y-8">
+                <!-- 装飾ヘッダー（かっこいいフォント） -->
+                <div class="text-center py-4 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-y-2 border-theme-500/40 rounded-2xl shadow-2xl">
+                    <h2 class="font-king text-2xl md:text-4xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-theme-500 to-amber-400 drop-shadow-md">
+                        「天は鳴き、大地は震える。」
+                    </h2>
+                </div>
+
                 <!-- 収支＆電車ウィジェット -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
@@ -127,15 +138,13 @@
                     </div>
                 </div>
 
-                <!-- 忘れてはいけないことメモ（新機能） -->
+                <!-- 忘れてはいけないことメモ -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-lg font-black text-amber-400 flex items-center gap-2">📌 絶対に忘れてはいけないこと（KINGメモ）</h2>
                         <button onclick="openMemoModal()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">＋ メモを追加</button>
                     </div>
-                    <div id="home-memo-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                        <!-- 動的挿入 -->
-                    </div>
+                    <div id="home-memo-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
 
                 <!-- 予定＆タスク一覧 -->
@@ -211,7 +220,7 @@
 
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
-                        <h2 class="text-lg font-black text-slate-200">📋 フリーランス作業案件一覧（報酬ランク自動判定付き）</h2>
+                        <h2 class="text-lg font-black text-slate-200">📋 今月の進行中・未着手案件</h2>
                         <button onclick="openTaskModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-5 py-2.5 rounded-xl text-sm font-black shadow-lg">＋ 新規案件を追加</button>
                     </div>
 
@@ -238,7 +247,7 @@
             <div id="tab-parttime" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl">
-                        <div class="text-xs font-bold text-slate-400 uppercase mb-1">今月のバイト給与合計 (手当・電車賃込)</div>
+                        <div class="text-xs font-bold text-slate-400 uppercase mb-1">今月のバイト給与合計</div>
                         <div class="text-4xl font-black text-emerald-400" id="pt-total-income">¥0</div>
                     </div>
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl">
@@ -262,9 +271,9 @@
                                 <tr class="border-b-2 border-slate-700 text-xs font-black text-slate-400 uppercase">
                                     <th class="py-4 px-4">勤務日</th>
                                     <th class="py-4 px-4">勤務先</th>
-                                    <th class="py-4 px-4">内訳 (基本/深夜/残業/交通費)</th>
+                                    <th class="py-4 px-4">総勤務時間</th>
+                                    <th class="py-4 px-4">給与内訳 (基本/深夜/残業/電車賃)</th>
                                     <th class="py-4 px-4">総支給額</th>
-                                    <th class="py-4 px-4">給与振込予定日</th>
                                     <th class="py-4 px-4 text-right">操作</th>
                                 </tr>
                             </thead>
@@ -274,7 +283,7 @@
                 </div>
             </div>
 
-            <!-- ================= 5. その他編集（設定）画面 ================= -->
+            <!-- ================= 5. その他編集（設定 & アーカイブ）画面 ================= -->
             <div id="tab-settings" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-5">
@@ -307,6 +316,15 @@
                             <button type="submit" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-black py-3 rounded-xl transition shadow">時刻表を保存</button>
                         </form>
                     </div>
+                </div>
+
+                <!-- 月別タスクアーカイブ（新機能） -->
+                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                    <div class="flex justify-between items-center border-b border-slate-700 pb-3">
+                        <h2 class="text-lg font-black text-slate-200">📦 フリーランス案件 月別アーカイブ</h2>
+                        <span class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full font-bold">完了した案件を自動保管</span>
+                    </div>
+                    <div id="task-archive-container" class="space-y-4"></div>
                 </div>
             </div>
 
@@ -384,7 +402,7 @@
                 <div class="grid grid-cols-2 gap-3">
                     <div>
                         <label class="block font-bold text-slate-400 mb-1">作業時間 (h・手動可)</label>
-                        <input type="number" step="0.1" id="task-manual-hours" placeholder="2.5" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                        <input type="number" step="0.01" id="task-manual-hours" placeholder="6.17 (6時間17分)" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                     </div>
                     <div>
                         <label class="block font-bold text-slate-400 mb-1">ステータス</label>
@@ -403,7 +421,7 @@
         </div>
     </div>
 
-    <!-- モーダル：バイト追加（詳細計算・電車賃対応） -->
+    <!-- モーダル：バイト追加（すべて数値入力＆時間計算対応） -->
     <div id="pt-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 class="text-xl font-black text-white">バイト勤務・給与詳細登録</h3>
@@ -418,24 +436,24 @@
                         <input type="date" id="pt-date" required class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-400 mb-1">総勤務時間 (h)</label>
-                        <input type="number" step="0.5" id="pt-hours" required placeholder="5" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                        <label class="block font-bold text-slate-400 mb-1">総勤務時間 (例: 6.17)</label>
+                        <input type="number" step="0.01" id="pt-hours" required placeholder="6.17" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-400 mb-1">基本給 (円)</label>
-                        <input type="number" id="pt-base" required placeholder="6000" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                        <label class="block font-bold text-slate-400 mb-1">基本時給 (円)</label>
+                        <input type="number" id="pt-base-wage" required placeholder="1200" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                     </div>
                     <div>
-                        <label class="block font-bold text-slate-400 mb-1">深夜給 (円)</label>
-                        <input type="number" id="pt-midnight" value="0" placeholder="0" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                        <label class="block font-bold text-slate-400 mb-1">深夜勤務時間 (h)</label>
+                        <input type="number" step="0.01" id="pt-midnight-hours" value="0" placeholder="1.5" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                     </div>
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
-                        <label class="block font-bold text-slate-400 mb-1">残業給 (円)</label>
-                        <input type="number" id="pt-overtime" value="0" placeholder="0" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                        <label class="block font-bold text-slate-400 mb-1">残業時間 (h)</label>
+                        <input type="number" step="0.01" id="pt-overtime-hours" value="0" placeholder="1.0" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                     </div>
                     <div>
                         <label class="block font-bold text-slate-400 mb-1">電車賃 / 交通費 (円)</label>
@@ -464,7 +482,7 @@
             { id: 2, type: 'general', title: 'ゆめと買い物', date: '2026-10-31' }
         ];
         let partTimes = JSON.parse(localStorage.getItem('kk_parttimes')) || [
-            { id: 1, name: 'カフェバイト', date: '2026-10-15', hours: 6, base: 7200, midnight: 0, overtime: 0, transport: 600, payday: '2026-11-10' }
+            { id: 1, name: 'カフェバイト', date: '2026-10-15', hoursRaw: 6.17, baseWage: 1200, midnightHrs: 0, overtimeHrs: 0, transport: 600, payday: '2026-11-10' }
         ];
         let memos = JSON.parse(localStorage.getItem('kk_memos')) || [
             { id: 1, content: '木曜の3D実習の課題を絶対に忘れないこと！' }
@@ -482,6 +500,20 @@
         let currentYear = 2026;
         let currentMonth = 9;
         let calMode = 'univ';
+
+        // 入力された「6.17」のような数値を実際の時間（6 + 17/60 ≒ 6.28時間）に変換する関数
+        function parseFormattedTime(num) {
+            if (!num || isNaN(num)) return 0;
+            const str = String(num);
+            if (str.includes('.')) {
+                const parts = str.split('.');
+                const hrs = parseInt(parts[0], 10) || 0;
+                let mins = parseInt(parts[1].substring(0, 2), 10) || 0;
+                if (parts[1].length === 1) mins *= 10;
+                return hrs + (mins / 60);
+            }
+            return parseFloat(num);
+        }
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = localStorage.getItem('kk_username');
@@ -530,6 +562,7 @@
             renderTasks();
             renderPartTimes();
             renderMemos();
+            renderTaskArchives();
         }
 
         function saveData() {
@@ -543,6 +576,7 @@
             renderTasks();
             renderPartTimes();
             renderMemos();
+            renderTaskArchives();
         }
 
         function switchTab(tabName) {
@@ -559,13 +593,13 @@
             if (tabName === 'tasks') renderCharts();
         }
 
-        // ================= ランク自動算出関数 =================
+        // ================= ランク自動算出関数（更新） =================
         function getRankInfo(wage) {
-            if (wage >= 4000) return { name: '🔥 編集の王', color: 'bg-rose-500/20 text-rose-300 border border-rose-500/50' };
-            if (wage >= 3000) return { name: '✨ やりますねぇ！', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/50' };
-            if (wage >= 2300) return { name: '🏆 ランク A', color: 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/50' };
-            if (wage >= 1800) return { name: '💪 ランク B', color: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50' };
-            if (wage >= 1200) return { name: '👍 ランク C', color: 'bg-sky-500/20 text-sky-300 border border-sky-500/50' };
+            if (wage >= 2500) return { name: '🔥 編集の王', color: 'bg-rose-500/20 text-rose-300 border border-rose-500/50' };
+            if (wage >= 2000) return { name: '✨ やりますねぇ！', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/50' };
+            if (wage >= 1500) return { name: '🏆 ランク A', color: 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/50' };
+            if (wage >= 1200) return { name: '💪 ランク B', color: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50' };
+            if (wage >= 1000) return { name: '👍 ランク C', color: 'bg-sky-500/20 text-sky-300 border border-sky-500/50' };
             return { name: '📌 ランク D', color: 'bg-slate-700 text-slate-300' };
         }
 
@@ -617,7 +651,7 @@
             alert('電車時刻表を更新しました！');
         }
 
-        // ================= KINGメモ（新機能） =================
+        // ================= KINGメモ =================
         function renderMemos() {
             const container = document.getElementById('home-memo-container');
             container.innerHTML = memos.length === 0 ? '<div class="text-sm text-slate-500 col-span-full">メモはありません。</div>' : '';
@@ -656,13 +690,19 @@
             let ptInc = 0;
             partTimes.forEach(p => {
                 if (p.date.startsWith(currentYm)) {
-                    ptInc += ((p.base || 0) + (p.midnight || 0) + (p.overtime || 0) + (p.transport || 0));
+                    const totalHours = parseFormattedTime(p.hoursRaw);
+                    const midHours = parseFormattedTime(p.midnightHrs);
+                    const overHours = parseFormattedTime(p.overtimeHrs);
+                    const basePay = totalHours * (p.baseWage || 0);
+                    const midPay = midHours * (p.baseWage || 0) * 0.25;
+                    const overPay = overHours * (p.baseWage || 0) * 0.25;
+                    ptInc += (basePay + midPay + overPay + (p.transport || 0));
                 }
             });
 
-            document.getElementById('home-total-income').textContent = `¥${(taskInc + ptInc).toLocaleString()}`;
+            document.getElementById('home-total-income').textContent = `¥${Math.round(taskInc + ptInc).toLocaleString()}`;
             document.getElementById('home-task-income').textContent = `¥${taskInc.toLocaleString()}`;
-            document.getElementById('home-pt-income').textContent = `¥${ptInc.toLocaleString()}`;
+            document.getElementById('home-pt-income').textContent = `¥${Math.round(ptInc).toLocaleString()}`;
 
             const todayStr = now.toISOString().split('T')[0];
             const todayEvents = events.filter(e => e.date === todayStr);
@@ -775,14 +815,17 @@
         function renderTasks() {
             const tbody = document.getElementById('task-table-body');
             tbody.innerHTML = '';
-            tasks.forEach(task => {
+            // 進行中・未着手のタスクを表示
+            const activeTasks = tasks.filter(t => t.status !== '完了');
+            if (activeTasks.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" class="py-6 text-center text-slate-500 font-bold">進行中・未着手の案件はありません。「その他編集」で月別アーカイブを確認できます。</td></tr>`;
+            }
+            activeTasks.forEach(task => {
                 const totalSec = task.seconds || 0;
                 const hours = (totalSec / 3600).toFixed(2);
                 const wage = totalSec > 0 ? Math.round(task.reward / (totalSec / 3600)) : 0;
                 const rank = getRankInfo(wage);
-                let badge = 'bg-slate-700 text-slate-300';
-                if (task.status === '進行中') badge = 'bg-amber-500/20 text-amber-400 border border-amber-500/40';
-                if (task.status === '完了') badge = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40';
+                let badge = task.status === '進行中' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/40' : 'bg-slate-700 text-slate-300';
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700/40 transition">
@@ -801,6 +844,60 @@
                             <button onclick="deleteTask(${task.id})" class="text-slate-400 hover:text-rose-400 font-black text-base ml-1">✕</button>
                         </td>
                     </tr>
+                `;
+            });
+        }
+
+        // ================= タスク月別アーカイブ描画（新機能） =================
+        function renderTaskArchives() {
+            const container = document.getElementById('task-archive-container');
+            container.innerHTML = '';
+
+            const completedTasks = tasks.filter(t => t.status === '完了');
+            if (completedTasks.length === 0) {
+                container.innerHTML = `<div class="text-sm text-slate-500">完了してアーカイブされた案件はありません。</div>`;
+                return;
+            }
+
+            // 月ごとにグループ化
+            const groups = {};
+            completedTasks.forEach(t => {
+                const ym = t.duedate ? t.duedate.substring(0, 7) : '日付なし';
+                if (!groups[ym]) groups[ym] = [];
+                groups[ym].push(t);
+            });
+
+            // 年月順に並べ替え
+            Object.keys(groups).sort().reverse().forEach(ym => {
+                let listHtml = '';
+                let ymTotal = 0;
+                groups[ym].forEach(t => {
+                    ymTotal += t.reward;
+                    const hours = (t.seconds / 3600).toFixed(2);
+                    const wage = t.seconds > 0 ? Math.round(t.reward / (t.seconds / 3600)) : 0;
+                    const rank = getRankInfo(wage);
+                    listHtml += `
+                        <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 flex justify-between items-center text-sm">
+                            <div>
+                                <span class="font-bold text-white">${t.title}</span>
+                                <span class="text-xs text-slate-400 ml-2">(${hours}h / 実質時給 ¥${wage.toLocaleString()})</span>
+                            </div>
+                            <div class="flex items-center space-x-3">
+                                <span class="px-2 py-0.5 rounded text-xs font-bold ${rank.color}">${rank.name}</span>
+                                <span class="text-emerald-400 font-black">¥${t.reward.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                container.innerHTML += `
+                    <div class="bg-slate-900/40 border border-slate-700/80 rounded-2xl p-4 space-y-2">
+                        <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
+                            <h3 class="font-black text-theme-500 text-base">📅 ${ym} アーカイブ</h3>
+                            <span class="text-sm font-bold text-emerald-400">合計: ¥${ymTotal.toLocaleString()}</span>
+                        </div>
+                        <div class="space-y-2">${listHtml}</div>
+                    </div>
                 `;
             });
         }
@@ -849,7 +946,7 @@
             pauseTimer();
             if (activeTaskId) {
                 const task = tasks.find(t => t.id === activeTaskId);
-                if (task) { task.status = '完了'; saveData(); alert(`「${task.title}」を完了にして保存しました！`); }
+                if (task) { task.status = '完了'; saveData(); alert(`「${task.title}」を完了にして保存（アーカイブ保管）しました！`); }
             }
         }
 
@@ -868,7 +965,7 @@
             document.getElementById('task-title').value = task.title;
             document.getElementById('task-reward').value = task.reward;
             document.getElementById('task-duedate').value = task.duedate;
-            document.getElementById('task-manual-hours').value = (task.seconds / 3600).toFixed(1);
+            document.getElementById('task-manual-hours').value = (task.seconds / 3600).toFixed(2);
             document.getElementById('task-status-select').value = task.status;
             document.getElementById('task-modal').classList.remove('hidden');
         }
@@ -880,14 +977,15 @@
             const title = document.getElementById('task-title').value;
             const reward = Number(document.getElementById('task-reward').value);
             const duedate = document.getElementById('task-duedate').value;
-            const manualHours = Number(document.getElementById('task-manual-hours').value) || 0;
+            const rawManualHours = Number(document.getElementById('task-manual-hours').value) || 0;
+            const parsedHours = parseFormattedTime(rawManualHours);
             const status = document.getElementById('task-status-select').value;
 
             if (editId) {
                 const task = tasks.find(t => t.id == editId);
-                if (task) { task.title = title; task.reward = reward; task.duedate = duedate; task.seconds = manualHours * 3600; task.status = status; }
+                if (task) { task.title = title; task.reward = reward; task.duedate = duedate; task.seconds = parsedHours * 3600; task.status = status; }
             } else {
-                tasks.push({ id: Date.now(), title, reward, duedate, seconds: manualHours * 3600, status });
+                tasks.push({ id: Date.now(), title, reward, duedate, seconds: parsedHours * 3600, status });
             }
             saveData();
             closeTaskModal();
@@ -897,7 +995,7 @@
             if (confirm('この案件を削除しますか？')) { tasks = tasks.filter(t => t.id !== id); saveData(); }
         }
 
-        // ================= バイト管理（詳細計算・電車賃） =================
+        // ================= バイト管理（計算方法完全修正） =================
         function renderPartTimes() {
             const tbody = document.getElementById('pt-table-body');
             tbody.innerHTML = '';
@@ -907,25 +1005,33 @@
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
             partTimes.forEach(p => {
-                const subTotal = (p.base || 0) + (p.midnight || 0) + (p.overtime || 0) + (p.transport || 0);
+                const totalHours = parseFormattedTime(p.hoursRaw);
+                const midHours = parseFormattedTime(p.midnightHrs);
+                const overHours = parseFormattedTime(p.overtimeHrs);
+
+                const basePay = totalHours * (p.baseWage || 0);
+                const midPay = midHours * (p.baseWage || 0) * 0.25;
+                const overPay = overHours * (p.baseWage || 0) * 0.25;
+                const subTotal = Math.round(basePay + midPay + overPay + (p.transport || 0));
+
                 if (p.date.startsWith(currentYm)) {
                     totalInc += subTotal;
-                    totalHrs += p.hours;
+                    totalHrs += totalHours;
                 }
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700/45 transition">
                         <td class="py-4 px-4 text-slate-300 text-sm font-bold">${p.date}</td>
                         <td class="py-4 px-4 font-black text-white text-base">${p.name}</td>
-                        <td class="py-4 px-4 text-slate-300 text-sm">
-                            基:¥${(p.base||0).toLocaleString()} / 深:¥${(p.midnight||0).toLocaleString()} / 残:¥${(p.overtime||0).toLocaleString()} / 電:¥${(p.transport||0).toLocaleString()}
+                        <td class="py-4 px-4 text-slate-200 font-bold text-sm">${p.hoursRaw} h</td>
+                        <td class="py-4 px-4 text-slate-300 text-xs">
+                            基本(¥${(p.baseWage||0)}/h) + 深夜(${p.midnightHrs||0}h) + 残業(${p.overtimeHrs||0}h) + 電車賃(¥${p.transport||0})
                         </td>
                         <td class="py-4 px-4 text-emerald-400 font-black text-lg">¥${subTotal.toLocaleString()}</td>
-                        <td class="py-4 px-4 text-theme-500 font-bold text-sm">📅 ${p.payday} 振込</td>
                         <td class="py-4 px-4 text-right"><button onclick="deletePt(${p.id})" class="text-slate-400 hover:text-rose-400 font-black text-base">✕ 削除</button></td>
                     </tr>
                 `;
             });
-            document.getElementById('pt-total-income').textContent = `¥${totalInc.toLocaleString()}`;
+            document.getElementById('pt-total-income').textContent = `¥${Math.round(totalInc).toLocaleString()}`;
             document.getElementById('pt-total-hours').textContent = `${totalHrs.toFixed(1)} h`;
         }
 
@@ -937,10 +1043,10 @@
                 id: Date.now(),
                 name: document.getElementById('pt-name').value,
                 date: document.getElementById('pt-date').value,
-                hours: Number(document.getElementById('pt-hours').value),
-                base: Number(document.getElementById('pt-base').value) || 0,
-                midnight: Number(document.getElementById('pt-midnight').value) || 0,
-                overtime: Number(document.getElementById('pt-overtime').value) || 0,
+                hoursRaw: Number(document.getElementById('pt-hours').value),
+                baseWage: Number(document.getElementById('pt-base-wage').value),
+                midnightHrs: Number(document.getElementById('pt-midnight-hours').value) || 0,
+                overtimeHrs: Number(document.getElementById('pt-overtime-hours').value) || 0,
                 transport: Number(document.getElementById('pt-transport').value) || 0,
                 payday: document.getElementById('pt-payday').value
             });
@@ -953,9 +1059,10 @@
 
         // ================= グラフ描画 =================
         function renderCharts() {
-            const labels = tasks.map(t => t.title.length > 8 ? t.title.substring(0, 8) + '...' : t.title);
-            const wages = tasks.map(t => t.seconds > 0 ? Math.round(t.reward / (t.seconds / 3600)) : 0);
-            const hours = tasks.map(t => (t.seconds / 3600).toFixed(1));
+            const activeTasks = tasks.filter(t => t.status !== '完了');
+            const labels = activeTasks.map(t => t.title.length > 8 ? t.title.substring(0, 8) + '...' : t.title);
+            const wages = activeTasks.map(t => t.seconds > 0 ? Math.round(t.reward / (t.seconds / 3600)) : 0);
+            const hours = activeTasks.map(t => (t.seconds / 3600).toFixed(1));
 
             const ctxWage = document.getElementById('wageChart').getContext('2d');
             if (wageChartInstance) wageChartInstance.destroy();
