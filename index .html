@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KANRI KING - オールインワン管理ダッシュボード</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // テーマカラー適用のための初期スクリプト
+        const savedTheme = localStorage.getItem('kk_theme') || 'slate';
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            500: savedTheme === 'purple' ? '#a855f7' : savedTheme === 'emerald' ? '#10b981' : savedTheme === 'blue' ? '#3b82f6' : '#6366f1',
+                            600: savedTheme === 'purple' ? '#9333ea' : savedTheme === 'emerald' ? '#059669' : savedTheme === 'blue' ? '#2563eb' : '#4f46e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body id="body-root" class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+    <!-- ログイン画面 -->
+    <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
+            <div class="mb-4">
+                <!-- アイコン画像 (icon.jpgを同じリポジトリに配置してください) -->
+                <img src="icon.jpg" alt="KANRI KING" onerror="this.src='https://via.placeholder.com/80?text=KING'" class="w-20 h-20 rounded-2xl mx-auto object-cover border-2 border-indigo-500 shadow-lg shadow-indigo-500/30 mb-3">
+                <h1 class="text-2xl font-black tracking-wider text-white">KANRI KING</h1>
+                <p class="text-slate-400 text-xs mt-1">最強のオールインワン自己管理システム</p>
+            </div>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">ユーザー名</label>
+                    <input type="text" id="login-user" required placeholder="例: KANRI KING本人" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-theme-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">アクセスPIN</label>
+                    <input type="password" id="login-pin" required placeholder="4桁以上の暗証番号" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-theme-500">
+                </div>
+                <button type="submit" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-theme-600/30">
+                    KINGとしてログイン
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- メインアプリ画面 -->
+    <div id="main-app" class="hidden flex flex-col min-h-screen">
+        <!-- ヘッダー＆タブナビゲーション -->
+        <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center shadow-md gap-3">
+            <div class="flex items-center space-x-3">
+                <img src="icon.jpg" alt="Icon" onerror="this.src='https://via.placeholder.com/40?text=KING'" class="w-10 h-10 rounded-xl object-cover border border-theme-500 shadow">
+                <h1 class="text-lg font-black tracking-wider text-white flex items-center gap-2">
+                    KANRI KING <span class="text-xs bg-theme-500/20 text-theme-500 px-2 py-0.5 rounded-full font-semibold">皇帝仕様</span>
+                </h1>
+            </div>
+            
+            <!-- ページタブ -->
+            <nav class="flex flex-wrap justify-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700/60 text-xs">
+                <button onclick="switchTab('home')" id="tab-btn-home" class="px-3 py-1.5 rounded-lg font-semibold transition bg-theme-600 text-white">ホーム</button>
+                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">カレンダー</button>
+                <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">タスク</button>
+                <button onclick="switchTab('parttime')" id="tab-btn-parttime" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">バイト</button>
+                <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">その他編集</button>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <span id="display-username" class="text-xs bg-slate-700 text-theme-500 px-3 py-1 rounded-full font-bold"></span>
+                <button onclick="handleLogout()" class="text-xs bg-slate-700 hover:bg-rose-600/80 text-slate-300 px-3 py-1.5 rounded-lg transition">ログアウト</button>
+            </div>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+            <!-- ================= 1. ホーム画面 ================= -->
+            <div id="tab-home" class="space-y-6">
+                <!-- 収支＆電車ウィジェット -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl shadow flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-slate-400 mb-1">今月の総収入（タスク ＋ バイト）</div>
+                            <div class="text-3xl font-extrabold text-emerald-400" id="home-total-income">¥0</div>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-4 flex justify-between border-t border-slate-700/60 pt-2">
+                            <span>案件: <strong id="home-task-income" class="text-slate-200">¥0</strong></span>
+                            <span>バイト: <strong id="home-pt-income" class="text-slate-200">¥0</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- 電車時刻表ウィジェット -->
+                    <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl shadow md:col-span-2 flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <span>🚆 電車発車時刻表</span>
+                                <span id="train-route-label" class="bg-slate-700 text-indigo-300 px-2 py-0.5 rounded text-[10px]">最寄り駅 → 到着駅</span>
+                            </div>
+                            <button onclick="switchTab('settings')" class="text-xs text-theme-500 hover:underline">時刻表を編集 →</button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center">
+                                <div>
+                                    <div class="text-[10px] text-slate-400">次に来る電車 (1本目)</div>
+                                    <div class="text-xl font-mono font-bold text-white" id="train-next-1">--:--</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] text-slate-400">発車まで</div>
+                                    <div class="text-sm font-bold text-theme-500" id="train-countdown-1">--分後</div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center">
+                                <div>
+                                    <div class="text-[10px] text-slate-400">その次に来る電車 (2本目)</div>
+                                    <div class="text-xl font-mono font-bold text-slate-300" id="train-next-2">--:--</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] text-slate-400">発車まで</div>
+                                    <div class="text-sm font-bold text-slate-400" id="train-countdown-2">--分後</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 予定＆タスク一覧 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                        <h2 class="font-bold text-slate-200 text-sm mb-3">🎓 本日の大学講義・一般予定</h2>
+                        <div id="home-today-events" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                        <h2 class="font-bold text-slate-200 text-sm mb-3">⚡ 1週間以内の要対応タスク</h2>
+                        <div id="home-urgent-tasks" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 2. カレンダー画面 ================= -->
+            <div id="tab-calendar" class="space-y-6 hidden">
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                    <!-- カレンダー切り替えタブ＆コントロール -->
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700">
+                            <button onclick="setCalMode('univ')" id="cal-mode-univ" class="px-4 py-1.5 rounded-lg text-xs font-bold transition bg-theme-600 text-white">🎓 大学カレンダー</button>
+                            <button onclick="setCal
