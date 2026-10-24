@@ -1,0 +1,953 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KANRI KING - オールインワン管理ダッシュボード</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // テーマカラー適用のための初期スクリプト
+        const savedTheme = localStorage.getItem('kk_theme') || 'slate';
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        theme: {
+                            500: savedTheme === 'purple' ? '#a855f7' : savedTheme === 'emerald' ? '#10b981' : savedTheme === 'blue' ? '#3b82f6' : '#6366f1',
+                            600: savedTheme === 'purple' ? '#9333ea' : savedTheme === 'emerald' ? '#059669' : savedTheme === 'blue' ? '#2563eb' : '#4f46e5',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body id="body-root" class="bg-slate-900 text-slate-100 min-h-screen font-sans">
+
+    <!-- ログイン画面 -->
+    <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-8 max-w-md w-full shadow-2xl text-center">
+            <div class="mb-4">
+                <!-- アイコン画像 (icon.jpgを同じリポジトリに配置してください) -->
+                <img src="icon.jpg" alt="KANRI KING" onerror="this.src='https://via.placeholder.com/80?text=KING'" class="w-20 h-20 rounded-2xl mx-auto object-cover border-2 border-indigo-500 shadow-lg shadow-indigo-500/30 mb-3">
+                <h1 class="text-2xl font-black tracking-wider text-white">KANRI KING</h1>
+                <p class="text-slate-400 text-xs mt-1">最強のオールインワン自己管理システム</p>
+            </div>
+            
+            <form onsubmit="handleLogin(event)" class="space-y-4 text-left">
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">ユーザー名</label>
+                    <input type="text" id="login-user" required placeholder="例: KANRI KING本人" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-theme-500">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1">アクセスPIN</label>
+                    <input type="password" id="login-pin" required placeholder="4桁以上の暗証番号" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-4 py-3 text-white text-sm focus:outline-none focus:border-theme-500">
+                </div>
+                <button type="submit" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-bold py-3 rounded-lg transition shadow-lg shadow-theme-600/30">
+                    KINGとしてログイン
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- メインアプリ画面 -->
+    <div id="main-app" class="hidden flex flex-col min-h-screen">
+        <!-- ヘッダー＆タブナビゲーション -->
+        <header class="bg-slate-800 border-b border-slate-700 sticky top-0 z-40 px-4 md:px-6 py-3 flex flex-col md:flex-row justify-between items-center shadow-md gap-3">
+            <div class="flex items-center space-x-3">
+                <img src="icon.jpg" alt="Icon" onerror="this.src='https://via.placeholder.com/40?text=KING'" class="w-10 h-10 rounded-xl object-cover border border-theme-500 shadow">
+                <h1 class="text-lg font-black tracking-wider text-white flex items-center gap-2">
+                    KANRI KING <span class="text-xs bg-theme-500/20 text-theme-500 px-2 py-0.5 rounded-full font-semibold">皇帝仕様</span>
+                </h1>
+            </div>
+            
+            <!-- ページタブ -->
+            <nav class="flex flex-wrap justify-center gap-1 bg-slate-900 p-1 rounded-xl border border-slate-700/60 text-xs">
+                <button onclick="switchTab('home')" id="tab-btn-home" class="px-3 py-1.5 rounded-lg font-semibold transition bg-theme-600 text-white">ホーム</button>
+                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">カレンダー</button>
+                <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">タスク</button>
+                <button onclick="switchTab('parttime')" id="tab-btn-parttime" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">バイト</button>
+                <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white">その他編集</button>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <span id="display-username" class="text-xs bg-slate-700 text-theme-500 px-3 py-1 rounded-full font-bold"></span>
+                <button onclick="handleLogout()" class="text-xs bg-slate-700 hover:bg-rose-600/80 text-slate-300 px-3 py-1.5 rounded-lg transition">ログアウト</button>
+            </div>
+        </header>
+
+        <!-- メインコンテンツ -->
+        <main class="flex-1 max-w-7xl w-full mx-auto p-4 md:p-6 space-y-6">
+
+            <!-- ================= 1. ホーム画面 ================= -->
+            <div id="tab-home" class="space-y-6">
+                <!-- 収支＆電車ウィジェット -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl shadow flex flex-col justify-between">
+                        <div>
+                            <div class="text-xs text-slate-400 mb-1">今月の総収入（タスク ＋ バイト）</div>
+                            <div class="text-3xl font-extrabold text-emerald-400" id="home-total-income">¥0</div>
+                        </div>
+                        <div class="text-xs text-slate-400 mt-4 flex justify-between border-t border-slate-700/60 pt-2">
+                            <span>案件: <strong id="home-task-income" class="text-slate-200">¥0</strong></span>
+                            <span>バイト: <strong id="home-pt-income" class="text-slate-200">¥0</strong></span>
+                        </div>
+                    </div>
+
+                    <!-- 電車時刻表ウィジェット -->
+                    <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl shadow md:col-span-2 flex flex-col justify-between">
+                        <div class="flex justify-between items-center mb-2">
+                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <span>🚆 電車発車時刻表</span>
+                                <span id="train-route-label" class="bg-slate-700 text-indigo-300 px-2 py-0.5 rounded text-[10px]">最寄り駅 → 到着駅</span>
+                            </div>
+                            <button onclick="switchTab('settings')" class="text-xs text-theme-500 hover:underline">時刻表を編集 →</button>
+                        </div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                            <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center">
+                                <div>
+                                    <div class="text-[10px] text-slate-400">次に来る電車 (1本目)</div>
+                                    <div class="text-xl font-mono font-bold text-white" id="train-next-1">--:--</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] text-slate-400">発車まで</div>
+                                    <div class="text-sm font-bold text-theme-500" id="train-countdown-1">--分後</div>
+                                </div>
+                            </div>
+                            <div class="bg-slate-900/60 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center">
+                                <div>
+                                    <div class="text-[10px] text-slate-400">その次に来る電車 (2本目)</div>
+                                    <div class="text-xl font-mono font-bold text-slate-300" id="train-next-2">--:--</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] text-slate-400">発車まで</div>
+                                    <div class="text-sm font-bold text-slate-400" id="train-countdown-2">--分後</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 予定＆タスク一覧 -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                        <h2 class="font-bold text-slate-200 text-sm mb-3">🎓 本日の大学講義・一般予定</h2>
+                        <div id="home-today-events" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                        <h2 class="font-bold text-slate-200 text-sm mb-3">⚡ 1週間以内の要対応タスク</h2>
+                        <div id="home-urgent-tasks" class="space-y-2 max-h-60 overflow-y-auto"></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 2. カレンダー画面 ================= -->
+            <div id="tab-calendar" class="space-y-6 hidden">
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                    <!-- カレンダー切り替えタブ＆コントロール -->
+                    <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+                        <div class="flex bg-slate-900 p-1 rounded-xl border border-slate-700">
+                            <button onclick="setCalMode('univ')" id="cal-mode-univ" class="px-4 py-1.5 rounded-lg text-xs font-bold transition bg-theme-600 text-white">🎓 大学カレンダー</button>
+                            <button onclick="setCalMode('general')" id="cal-mode-general" class="px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white">📅 一般カレンダー</button>
+                        </div>
+                        <div class="flex items-center space-x-3">
+                            <button onclick="changeMonth(-1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm">&lt;</button>
+                            <h2 id="calendar-title" class="text-base font-bold text-white w-32 text-center">2026年 10月</h2>
+                            <button onclick="changeMonth(1)" class="bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-sm">&gt;</button>
+                        </div>
+                        <button onclick="openEventModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow">＋ 予定を追加（繰り返し対応）</button>
+                    </div>
+
+                    <div class="grid grid-cols-7 gap-1 text-center text-xs font-semibold text-slate-400 mb-2">
+                        <div class="text-rose-400">日</div><div>月</div><div>火</div><div>水</div><div>木</div><div>金</div><div class="text-indigo-400">土</div>
+                    </div>
+                    <div id="calendar-grid" class="grid grid-cols-7 gap-1"></div>
+                </div>
+            </div>
+
+            <!-- ================= 3. タスク管理画面 ================= -->
+            <div id="tab-tasks" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-3">
+                                <h2 class="font-bold text-slate-300 text-sm uppercase">⏱️ 作業タイマー</h2>
+                                <span id="timer-status" class="text-xs bg-emerald-500/20 text-emerald-400 px-2.5 py-0.5 rounded-full font-semibold">待機中</span>
+                            </div>
+                            <div id="active-task-name" class="text-base font-bold text-white mb-2 truncate">案件未選択</div>
+                            <div class="text-4xl font-mono font-extrabold text-theme-500 mb-4" id="timer-display">00:00:00</div>
+                            <div class="bg-slate-900/60 p-3 rounded-lg text-xs space-y-1 mb-4">
+                                <div class="flex justify-between"><span class="text-slate-400">依頼料:</span> <span id="timer-target-pay" class="font-bold">¥0</span></div>
+                                <div class="flex justify-between"><span class="text-slate-400">実質時給:</span> <span id="timer-live-wage" class="font-bold text-emerald-400">¥0 /h</span></div>
+                            </div>
+                        </div>
+                        <div class="flex space-x-2">
+                            <button onclick="startTimer()" id="btn-start" class="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 rounded-lg text-xs transition">開始</button>
+                            <button onclick="pauseTimer()" id="btn-pause" class="flex-1 bg-amber-600 hover:bg-amber-500 text-white font-bold py-2 rounded-lg text-xs transition hidden">一時停止</button>
+                            <button onclick="stopAndSaveTimer()" id="btn-stop" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3 py-2 rounded-lg text-xs transition">完了保存</button>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-700/40 h-44 flex flex-col justify-center">
+                            <h3 class="text-xs font-bold text-slate-400 mb-1">案件別 実質時給 (円/h)</h3>
+                            <div class="w-full h-32 relative"><canvas id="wageChart"></canvas></div>
+                        </div>
+                        <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-700/40 h-44 flex flex-col justify-center">
+                            <h3 class="text-xs font-bold text-slate-400 mb-1">作業時間割合</h3>
+                            <div class="w-full h-32 relative"><canvas id="timeChart"></canvas></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="font-bold text-slate-200 text-base">📋 フリーランス作業案件一覧</h2>
+                        <button onclick="openTaskModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-4 py-2 rounded-lg text-xs font-bold shadow">＋ 新規案件を追加</button>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-xs text-slate-400 uppercase">
+                                    <th class="py-3 px-3">案件名 / 概要</th>
+                                    <th class="py-3 px-3">納期</th>
+                                    <th class="py-3 px-3">依頼料</th>
+                                    <th class="py-3 px-3">作業時間 (手動修正可)</th>
+                                    <th class="py-3 px-3">実質時給</th>
+                                    <th class="py-3 px-3">ステータス</th>
+                                    <th class="py-3 px-3 text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="task-table-body" class="divide-y divide-slate-700/50 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 4. バイト管理画面 ================= -->
+            <div id="tab-parttime" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl shadow">
+                        <div class="text-xs text-slate-400 mb-1">今月のバイト給与合計</div>
+                        <div class="text-3xl font-extrabold text-emerald-400" id="pt-total-income">¥0</div>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl shadow">
+                        <div class="text-xs text-slate-400 mb-1">今月の総勤務時間</div>
+                        <div class="text-3xl font-extrabold text-theme-500" id="pt-total-hours">0.0 <span class="text-sm text-slate-400">h</span></div>
+                    </div>
+                    <div class="bg-slate-800 border border-slate-700 p-5 rounded-xl shadow flex items-center justify-between">
+                        <div>
+                            <div class="text-xs text-slate-400 mb-1">シフト・給与記録</div>
+                            <div class="text-sm font-bold text-white">振込日トラッカー</div>
+                        </div>
+                        <button onclick="openPtModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-4 py-2.5 rounded-lg text-xs font-bold shadow">＋ バイト追加</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow">
+                    <h2 class="font-bold text-slate-200 text-base mb-4">💼 バイト勤務履歴 & 振込日一覧</h2>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse">
+                            <thead>
+                                <tr class="border-b border-slate-700 text-xs text-slate-400 uppercase">
+                                    <th class="py-3 px-3">勤務日</th>
+                                    <th class="py-3 px-3">勤務先</th>
+                                    <th class="py-3 px-3">時間 (時給)</th>
+                                    <th class="py-3 px-3">給与額</th>
+                                    <th class="py-3 px-3">給与振込予定日</th>
+                                    <th class="py-3 px-3 text-right">操作</th>
+                                </tr>
+                            </thead>
+                            <tbody id="pt-table-body" class="divide-y divide-slate-700/50 text-sm"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 5. その他編集（設定）画面 ================= -->
+            <div id="tab-settings" class="space-y-6 hidden">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <!-- テーマカラー設定 -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow space-y-4">
+                        <h2 class="font-bold text-slate-200 text-base border-b border-slate-700 pb-2">🎨 テーマカラー変更</h2>
+                        <p class="text-xs text-slate-400">アプリ全体のアクセントカラーを変更できます。</p>
+                        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                            <button onclick="setTheme('indigo')" class="p-3 rounded-xl bg-indigo-600 text-white font-bold text-xs shadow hover:opacity-90">インディゴ</button>
+                            <button onclick="setTheme('blue')" class="p-3 rounded-xl bg-blue-600 text-white font-bold text-xs shadow hover:opacity-90">ロイヤルブルー</button>
+                            <button onclick="setTheme('purple')" class="p-3 rounded-xl bg-purple-600 text-white font-bold text-xs shadow hover:opacity-90">サイバーパープル</button>
+                            <button onclick="setTheme('emerald')" class="p-3 rounded-xl bg-emerald-600 text-white font-bold text-xs shadow hover:opacity-90">エメラルド</button>
+                        </div>
+                    </div>
+
+                    <!-- 電車時刻表設定 -->
+                    <div class="bg-slate-800 border border-slate-700 rounded-xl p-5 shadow space-y-4">
+                        <h2 class="font-bold text-slate-200 text-base border-b border-slate-700 pb-2">🚆 電車時刻表・路線設定</h2>
+                        <form onsubmit="saveTrainSettings(event)" class="space-y-3 text-xs">
+                            <div class="grid grid-cols-2 gap-2">
+                                <div>
+                                    <label class="block text-slate-400 mb-1">最寄り駅</label>
+                                    <input type="text" id="setting-from-station" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1">到着駅</label>
+                                    <input type="text" id="setting-to-station" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                                </div>
+                            </div>
+                            <div>
+                                <label class="block text-slate-400 mb-1">発車時刻リスト (カンマ区切りで入力 / 例: 07:15, 07:42, 08:10, 08:35)</label>
+                                <textarea id="setting-train-times" rows="3" required class="w-full bg-slate-900 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono"></textarea>
+                            </div>
+                            <button type="submit" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-bold py-2 rounded-lg transition">時刻表を保存</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- モーダル：カレンダー予定追加（繰り返し対応） -->
+    <div id="event-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-4" id="modal-event-title">予定の追加</h3>
+            <form onsubmit="saveEvent(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-400 mb-1">予定名（タイトル）</label>
+                    <input type="text" id="ev-title" required placeholder="例: 3Dモデリング演習 / バイト / デート" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">開始日</label>
+                        <input type="date" id="ev-date" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">繰り返し設定</label>
+                        <select id="ev-repeat" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                            <option value="once">単発（1回のみ）</option>
+                            <option value="weekly">毎週（全15回）</option>
+                            <option value="biweekly">隔週（全8回）</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeEventModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg">キャンセル</button>
+                    <button type="submit" class="bg-theme-600 text-white font-bold px-4 py-2 rounded-lg">登録する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- モーダル：タスク追加 -->
+    <div id="task-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-4">フリーランス案件の登録・編集</h3>
+            <form onsubmit="saveTask(event)" class="space-y-4 text-xs">
+                <input type="hidden" id="task-edit-id">
+                <div>
+                    <label class="block font-semibold text-slate-400 mb-1">案件名 / 概要</label>
+                    <input type="text" id="task-title" required placeholder="例: YouTube動画編集" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">依頼料 (円)</label>
+                        <input type="number" id="task-reward" required placeholder="15000" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">納期</label>
+                        <input type="date" id="task-duedate" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">作業時間 (h・手動修正可)</label>
+                        <input type="number" step="0.1" id="task-manual-hours" placeholder="2.5" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">ステータス</label>
+                        <select id="task-status-select" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                            <option value="未着手">未着手</option>
+                            <option value="進行中">進行中</option>
+                            <option value="完了">完了</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closeTaskModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg">キャンセル</button>
+                    <button type="submit" class="bg-theme-600 text-white font-bold px-4 py-2 rounded-lg">保存する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- モーダル：バイト追加 -->
+    <div id="pt-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl p-6 max-w-md w-full shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-4">バイト勤務・給与登録</h3>
+            <form onsubmit="savePt(event)" class="space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-400 mb-1">勤務先 / シフト名</label>
+                    <input type="text" id="pt-name" required placeholder="例: カフェ・塾講師" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">勤務日</label>
+                        <input type="date" id="pt-date" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">勤務時間 (h)</label>
+                        <input type="number" step="0.5" id="pt-hours" required placeholder="5" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">時給 (円)</label>
+                        <input type="number" id="pt-wage" required placeholder="1200" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                    <div>
+                        <label class="block font-semibold text-slate-400 mb-1">給与振込予定日</label>
+                        <input type="date" id="pt-payday" required class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white">
+                    </div>
+                </div>
+                <div class="flex justify-end space-x-2 pt-2">
+                    <button type="button" onclick="closePtModal()" class="bg-slate-800 text-slate-300 px-4 py-2 rounded-lg">キャンセル</button>
+                    <button type="submit" class="bg-theme-600 text-white font-bold px-4 py-2 rounded-lg">追加する</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- JavaScript ロジック -->
+    <script>
+        // データストア
+        let tasks = JSON.parse(localStorage.getItem('kk_tasks')) || [
+            { id: 1, title: 'YouTube案件カット編集', reward: 15000, duedate: '2026-10-30', seconds: 7200, status: '進行中' }
+        ];
+        let events = JSON.parse(localStorage.getItem('kk_events')) || [
+            { id: 1, type: 'univ', title: '3Dモデリング演習', date: '2026-10-26' },
+            { id: 2, type: 'general', title: 'ゆめと買い物', date: '2026-10-31' }
+        ];
+        let partTimes = JSON.parse(localStorage.getItem('kk_parttimes')) || [
+            { id: 1, name: 'カフェバイト', date: '2026-10-15', hours: 6, wage: 1200, payday: '2026-11-10' }
+        ];
+        let trainSettings = JSON.parse(localStorage.getItem('kk_train')) || {
+            from: '最寄り駅',
+            to: '到着駅',
+            times: ['07:15', '07:45', '08:12', '08:40', '09:15', '12:00', '15:30', '18:20', '21:00']
+        };
+
+        let activeTaskId = null;
+        let timerInterval = null;
+        let elapsedSeconds = 0;
+        let isRunning = false;
+        let wageChartInstance = null;
+        let timeChartInstance = null;
+        let currentYear = 2026;
+        let currentMonth = 9; // 0-indexed (10月)
+        let calMode = 'univ'; // 'univ' or 'general'
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = localStorage.getItem('kk_username');
+            if (savedUser) {
+                document.getElementById('display-username').textContent = savedUser;
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                initApp();
+            }
+            // 設定画面の初期値反映
+            document.getElementById('setting-from-station').value = trainSettings.from;
+            document.getElementById('setting-to-station').value = trainSettings.to;
+            document.getElementById('setting-train-times').value = trainSettings.times.join(', ');
+
+            // 電車時刻表のリアルタイム更新ループ開始
+            setInterval(updateTrainTimetable, 1000);
+            updateTrainTimetable();
+        });
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const username = document.getElementById('login-user').value.trim();
+            const pin = document.getElementById('login-pin').value.trim();
+            if (username && pin) {
+                localStorage.setItem('kk_username', username);
+                document.getElementById('display-username').textContent = username;
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                initApp();
+            }
+        }
+
+        function handleLogout() {
+            if (confirm('ログアウトしますか？')) {
+                localStorage.removeItem('kk_username');
+                location.reload();
+            }
+        }
+
+        function setTheme(color) {
+            localStorage.setItem('kk_theme', color);
+            location.reload();
+        }
+
+        function initApp() {
+            renderHome();
+            renderCalendar();
+            renderTasks();
+            renderPartTimes();
+        }
+
+        function saveData() {
+            localStorage.setItem('kk_tasks', JSON.stringify(tasks));
+            localStorage.setItem('kk_events', JSON.stringify(events));
+            localStorage.setItem('kk_parttimes', JSON.stringify(partTimes));
+            localStorage.setItem('kk_train', JSON.stringify(trainSettings));
+            renderHome();
+            renderCalendar();
+            renderTasks();
+            renderPartTimes();
+        }
+
+        function switchTab(tabName) {
+            ['home', 'calendar', 'tasks', 'parttime', 'settings'].forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                if (el) el.classList.add('hidden');
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (btn) btn.className = "px-3 py-1.5 rounded-lg font-semibold transition text-slate-400 hover:text-white text-xs";
+            });
+            const targetEl = document.getElementById(`tab-${tabName}`);
+            if (targetEl) targetEl.classList.remove('hidden');
+            const targetBtn = document.getElementById(`tab-btn-${tabName}`);
+            if (targetBtn) targetBtn.className = "px-3 py-1.5 rounded-lg font-semibold transition bg-theme-600 text-white text-xs";
+            if (tabName === 'tasks') renderCharts();
+        }
+
+        // ================= 電車時刻表ロジック =================
+        function updateTrainTimetable() {
+            document.getElementById('train-route-label').textContent = `${trainSettings.from} → ${trainSettings.to}`;
+            const now = new Date();
+            const currentMinutes = now.getHours() * 60 + now.getMinutes();
+            const currentSecs = now.getSeconds();
+
+            // 時刻表文字列を分に変換してソート
+            const sortedTimes = trainSettings.times.map(t => {
+                const [h, m] = t.split(':').map(Number);
+                return { str: t, mins: h * 60 + m };
+            }).sort((a, b) => a.mins - b.mins);
+
+            // 次以降の電車を検索
+            let upcoming = sortedTimes.filter(item => item.mins >= currentMinutes);
+            if (upcoming.length === 0 && sortedTimes.length > 0) {
+                // 翌日の最初とする場合などのフォールバック
+                upcoming = sortedTimes;
+            }
+
+            const t1 = upcoming[0] || { str: '--:--', mins: 0 };
+            const t2 = upcoming[1] || { str: '--:--', mins: 0 };
+
+            document.getElementById('train-next-1').textContent = t1.str;
+            document.getElementById('train-next-2').textContent = t2.str;
+
+            // カウントダウン計算
+            const diff1 = t1.mins - currentMinutes;
+            const diffSec1 = (diff1 * 60) - currentSecs;
+            if (t1.str !== '--:--' && diffSec1 >= 0) {
+                const m = Math.floor(diffSec1 / 60);
+                const s = diffSec1 % 60;
+                document.getElementById('train-countdown-1').textContent = m > 0 ? `${m}分 ${s}秒後` : `${s}秒後`;
+            } else {
+                document.getElementById('train-countdown-1').textContent = '発車間近/終了';
+            }
+
+            const diff2 = t2.mins - currentMinutes;
+            if (t2.str !== '--:--' && diff2 >= 0) {
+                document.getElementById('train-countdown-2').textContent = `約 ${diff2}分後`;
+            } else {
+                document.getElementById('train-countdown-2').textContent = '--';
+            }
+        }
+
+        function saveTrainSettings(e) {
+            e.preventDefault();
+            trainSettings.from = document.getElementById('setting-from-station').value;
+            trainSettings.to = document.getElementById('setting-to-station').value;
+            const rawTimes = document.getElementById('setting-train-times').value;
+            trainSettings.times = rawTimes.split(',').map(s => s.trim()).filter(s => s.length > 0);
+            saveData();
+            alert('電車時刻表の設定を保存しました！');
+        }
+
+        // ================= ホーム画面描画 =================
+        function renderHome() {
+            const now = new Date();
+            const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            
+            let taskInc = 0;
+            tasks.forEach(t => { if (t.status === '完了') taskInc += t.reward; });
+
+            let ptInc = 0;
+            partTimes.forEach(p => {
+                if (p.date.startsWith(currentYm)) ptInc += (p.hours * p.wage);
+            });
+
+            document.getElementById('home-total-income').textContent = `¥${(taskInc + ptInc).toLocaleString()}`;
+            document.getElementById('home-task-income').textContent = `¥${taskInc.toLocaleString()}`;
+            document.getElementById('home-pt-income').textContent = `¥${ptInc.toLocaleString()}`;
+
+            // 本日の予定
+            const todayStr = now.toISOString().split('T')[0];
+            const todayEvents = events.filter(e => e.date === todayStr);
+            const evContainer = document.getElementById('home-today-events');
+            evContainer.innerHTML = todayEvents.length === 0 ? '<div class="text-xs text-slate-500">本日の予定はありません。</div>' : '';
+            todayEvents.forEach(ev => {
+                const badge = ev.type === 'univ' ? 'bg-amber-500/20 text-amber-400' : 'bg-theme-500/20 text-theme-500';
+                const label = ev.type === 'univ' ? '大学講義' : '一般予定';
+                evContainer.innerHTML += `
+                    <div class="bg-slate-900/50 p-2.5 rounded-lg border border-slate-700/50 flex justify-between items-center text-xs">
+                        <div class="flex items-center space-x-2">
+                            <span class="px-2 py-0.5 rounded font-bold ${badge}">${label}</span>
+                            <span class="text-white font-medium">${ev.title}</span>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // 1週間以内のタスク
+            const nextWeek = new Date();
+            nextWeek.setDate(now.getDate() + 7);
+            const urgentTasks = tasks.filter(t => {
+                if (t.status === '完了') return false;
+                const d = new Date(t.duedate);
+                return d >= now && d <= nextWeek;
+            });
+
+            const urgentContainer = document.getElementById('home-urgent-tasks');
+            urgentContainer.innerHTML = urgentTasks.length === 0 ? '<div class="text-xs text-slate-500">1週間以内のタスクはありません。</div>' : '';
+            urgentTasks.forEach(t => {
+                urgentContainer.innerHTML += `
+                    <div class="bg-slate-900/50 p-3 rounded-lg border border-slate-700/50 flex justify-between items-center text-xs">
+                        <div>
+                            <div class="font-bold text-white">${t.title}</div>
+                            <div class="text-rose-400">納期: ${t.duedate}</div>
+                        </div>
+                        <span class="bg-amber-500/20 text-amber-400 px-2 py-0.5 rounded font-semibold">${t.status}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // ================= カレンダー管理 =================
+        function setCalMode(mode) {
+            calMode = mode;
+            if (mode === 'univ') {
+                document.getElementById('cal-mode-univ').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-theme-600 text-white";
+                document.getElementById('cal-mode-general').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+            } else {
+                document.getElementById('cal-mode-univ').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition text-slate-400 hover:text-white";
+                document.getElementById('cal-mode-general').className = "px-4 py-1.5 rounded-lg text-xs font-bold transition bg-theme-600 text-white";
+            }
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            document.getElementById('calendar-title').textContent = `${currentYear}年 ${currentMonth + 1}月`;
+            const grid = document.getElementById('calendar-grid');
+            grid.innerHTML = '';
+
+            const firstDay = new Date(currentYear, currentMonth, 1).getDay();
+            const lastDate = new Date(currentYear, currentMonth + 1, 0).getDate();
+
+            for (let i = 0; i < firstDay; i++) {
+                grid.innerHTML += `<div class="bg-slate-900/20 rounded-lg h-24"></div>`;
+            }
+
+            for (let day = 1; day <= lastDate; day++) {
+                const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+                const dayEvents = events.filter(e => e.date === dateStr && e.type === calMode);
+
+                let evHtml = '';
+                dayEvents.forEach(ev => {
+                    const color = ev.type === 'univ' ? 'bg-amber-500/20 text-amber-300' : 'bg-theme-500/20 text-theme-300';
+                    evHtml += `
+                        <div class="text-[10px] px-1 py-0.5 rounded flex justify-between items-center mb-0.5 ${color}">
+                            <span class="truncate">${ev.title}</span>
+                            <button onclick="deleteEvent(${ev.id})" class="text-slate-400 hover:text-rose-400 font-bold ml-1">×</button>
+                        </div>
+                    `;
+                });
+
+                grid.innerHTML += `
+                    <div class="bg-slate-900/60 border border-slate-700/50 rounded-lg p-1.5 h-24 overflow-y-auto flex flex-col justify-between">
+                        <div class="text-xs font-bold text-slate-300">${day}</div>
+                        <div class="space-y-0.5 flex-1 mt-1">${evHtml}</div>
+                    </div>
+                `;
+            }
+        }
+
+        function changeMonth(direction) {
+            currentMonth += direction;
+            if (currentMonth > 11) { currentMonth = 0; currentYear++; }
+            if (currentMonth < 0) { currentMonth = 11; currentYear--; }
+            renderCalendar();
+        }
+
+        function openEventModal() {
+            document.getElementById('modal-event-title').textContent = calMode === 'univ' ? '大学講義の追加（繰り返し対応）' : '一般予定の追加';
+            document.getElementById('event-modal').classList.remove('hidden');
+        }
+        function closeEventModal() { document.getElementById('event-modal').classList.add('hidden'); }
+
+        function saveEvent(e) {
+            e.preventDefault();
+            const title = document.getElementById('ev-title').value;
+            const startDateStr = document.getElementById('ev-date').value;
+            const repeat = document.getElementById('ev-repeat').value;
+
+            let count = 1;
+            let intervalDays = 7;
+            if (repeat === 'weekly') count = 15; // 全15回
+            if (repeat === 'biweekly') { count = 8; intervalDays = 14; } // 全8回
+
+            let currDate = new Date(startDateStr);
+            for (let i = 0; i < count; i++) {
+                const y = currDate.getFullYear();
+                const m = String(currDate.getMonth() + 1).padStart(2, '0');
+                const d = String(currDate.getDate()).padStart(2, '0');
+                const dStr = `${y}-${m}-${d}`;
+
+                events.push({
+                    id: Date.now() + i,
+                    type: calMode,
+                    title: title,
+                    date: dStr
+                });
+
+                currDate.setDate(currDate.getDate() + intervalDays);
+            }
+
+            saveData();
+            closeEventModal();
+            document.getElementById('ev-title').value = '';
+        }
+
+        function deleteEvent(id) {
+            events = events.filter(e => e.id !== id);
+            saveData();
+        }
+
+        // ================= タスク管理 =================
+        function renderTasks() {
+            const tbody = document.getElementById('task-table-body');
+            tbody.innerHTML = '';
+            tasks.forEach(task => {
+                const totalSec = task.seconds || 0;
+                const hours = (totalSec / 3600).toFixed(2);
+                const wage = totalSec > 0 ? Math.round(task.reward / (totalSec / 3600)) : 0;
+                let badge = 'bg-slate-700 text-slate-300';
+                if (task.status === '進行中') badge = 'bg-amber-500/20 text-amber-400';
+                if (task.status === '完了') badge = 'bg-emerald-500/20 text-emerald-400';
+
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700/30 transition">
+                        <td class="py-3 px-3 font-medium text-white">${task.title}</td>
+                        <td class="py-3 px-3 text-slate-300">${task.duedate}</td>
+                        <td class="py-3 px-3 text-emerald-400 font-bold">¥${task.reward.toLocaleString()}</td>
+                        <td class="py-3 px-3 text-slate-300">${hours} h</td>
+                        <td class="py-3 px-3 text-theme-500 font-semibold">¥${wage.toLocaleString()} /h</td>
+                        <td class="py-3 px-3"><span class="text-xs px-2.5 py-1 rounded-full font-semibold ${badge}">${task.status}</span></td>
+                        <td class="py-3 px-3 text-right space-x-1">
+                            <button onclick="selectTaskForTimer(${task.id})" class="bg-theme-600/80 hover:bg-theme-600 text-white px-2 py-1 rounded text-xs">計測</button>
+                            <button onclick="openEditTaskModal(${task.id})" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-2 py-1 rounded text-xs">編集</button>
+                            <button onclick="deleteTask(${task.id})" class="text-slate-500 hover:text-rose-400 text-xs">✕</button>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        function selectTaskForTimer(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            activeTaskId = task.id;
+            document.getElementById('active-task-name').textContent = task.title;
+            document.getElementById('timer-target-pay').textContent = `¥${task.reward.toLocaleString()}`;
+            elapsedSeconds = task.seconds || 0;
+            updateTimerDisplay();
+            pauseTimer();
+        }
+
+        function startTimer() {
+            if (!activeTaskId) { alert('タスクを選んでください'); return; }
+            if (isRunning) return;
+            isRunning = true;
+            document.getElementById('timer-status').textContent = '計測中...';
+            document.getElementById('btn-start').classList.add('hidden');
+            document.getElementById('btn-pause').classList.remove('hidden');
+
+            timerInterval = setInterval(() => {
+                elapsedSeconds++;
+                updateTimerDisplay();
+                const task = tasks.find(t => t.id === activeTaskId);
+                if (task) {
+                    task.seconds = elapsedSeconds;
+                    const wage = elapsedSeconds > 0 ? Math.round(task.reward / (elapsedSeconds / 3600)) : 0;
+                    document.getElementById('timer-live-wage').textContent = `¥${wage.toLocaleString()} /h`;
+                }
+            }, 1000);
+        }
+
+        function pauseTimer() {
+            isRunning = false;
+            clearInterval(timerInterval);
+            document.getElementById('timer-status').textContent = '一時停止';
+            document.getElementById('btn-start').classList.remove('hidden');
+            document.getElementById('btn-pause').classList.add('hidden');
+            saveData();
+        }
+
+        function stopAndSaveTimer() {
+            pauseTimer();
+            if (activeTaskId) {
+                const task = tasks.find(t => t.id === activeTaskId);
+                if (task) {
+                    task.status = '完了';
+                    saveData();
+                    alert(`「${task.title}」を完了にして保存しました！`);
+                }
+            }
+        }
+
+        function updateTimerDisplay() {
+            const h = String(Math.floor(elapsedSeconds / 3600)).padStart(2, '0');
+            const m = String(Math.floor((elapsedSeconds % 3600) / 60)).padStart(2, '0');
+            const s = String(elapsedSeconds % 60).padStart(2, '0');
+            document.getElementById('timer-display').textContent = `${h}:${m}:${s}`;
+        }
+
+        function openTaskModal() {
+            document.getElementById('task-edit-id').value = '';
+            document.getElementById('task-modal').classList.remove('hidden');
+        }
+        function openEditTaskModal(id) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            document.getElementById('task-edit-id').value = task.id;
+            document.getElementById('task-title').value = task.title;
+            document.getElementById('task-reward').value = task.reward;
+            document.getElementById('task-duedate').value = task.duedate;
+            document.getElementById('task-manual-hours').value = (task.seconds / 3600).toFixed(1);
+            document.getElementById('task-status-select').value = task.status;
+            document.getElementById('task-modal').classList.remove('hidden');
+        }
+        function closeTaskModal() { document.getElementById('task-modal').classList.add('hidden'); }
+
+        function saveTask(e) {
+            e.preventDefault();
+            const editId = document.getElementById('task-edit-id').value;
+            const title = document.getElementById('task-title').value;
+            const reward = Number(document.getElementById('task-reward').value);
+            const duedate = document.getElementById('task-duedate').value;
+            const manualHours = Number(document.getElementById('task-manual-hours').value) || 0;
+            const status = document.getElementById('task-status-select').value;
+
+            if (editId) {
+                const task = tasks.find(t => t.id == editId);
+                if (task) {
+                    task.title = title;
+                    task.reward = reward;
+                    task.duedate = duedate;
+                    task.seconds = manualHours * 3600;
+                    task.status = status;
+                }
+            } else {
+                tasks.push({ id: Date.now(), title, reward, duedate, seconds: manualHours * 3600, status });
+            }
+            saveData();
+            closeTaskModal();
+        }
+
+        function deleteTask(id) {
+            if (confirm('この案件を削除しますか？')) {
+                tasks = tasks.filter(t => t.id !== id);
+                saveData();
+            }
+        }
+
+        // ================= バイト管理 =================
+        function renderPartTimes() {
+            const tbody = document.getElementById('pt-table-body');
+            tbody.innerHTML = '';
+            let totalInc = 0;
+            let totalHrs = 0;
+            const now = new Date();
+            const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+            partTimes.forEach(p => {
+                const income = p.hours * p.wage;
+                if (p.date.startsWith(currentYm)) {
+                    totalInc += income;
+                    totalHrs += p.hours;
+                }
+                tbody.innerHTML += `
+                    <tr class="hover:bg-slate-700/30 transition">
+                        <td class="py-3 px-3 text-slate-300">${p.date}</td>
+                        <td class="py-3 px-3 font-medium text-white">${p.name}</td>
+                        <td class="py-3 px-3 text-slate-300">${p.hours} h (¥${p.wage.toLocaleString()}/h)</td>
+                        <td class="py-3 px-3 text-emerald-400 font-bold">¥${income.toLocaleString()}</td>
+                        <td class="py-3 px-3 text-theme-500 font-semibold">📅 ${p.payday} 振込</td>
+                        <td class="py-3 px-3 text-right"><button onclick="deletePt(${p.id})" class="text-slate-500 hover:text-rose-400 text-xs">✕ 削除</button></td>
+                    </tr>
+                `;
+            });
+            document.getElementById('pt-total-income').textContent = `¥${totalInc.toLocaleString()}`;
+            document.getElementById('pt-total-hours').textContent = `${totalHrs.toFixed(1)} h`;
+        }
+
+        function openPtModal() { document.getElementById('pt-modal').classList.remove('hidden'); }
+        function closePtModal() { document.getElementById('pt-modal').classList.add('hidden'); }
+        function savePt(e) {
+            e.preventDefault();
+            partTimes.push({
+                id: Date.now(),
+                name: document.getElementById('pt-name').value,
+                date: document.getElementById('pt-date').value,
+                hours: Number(document.getElementById('pt-hours').value),
+                wage: Number(document.getElementById('pt-wage').value),
+                payday: document.getElementById('pt-payday').value
+            });
+            saveData();
+            closePtModal();
+        }
+        function deletePt(id) {
+            if (confirm('このバイト記録を削除しますか？')) {
+                partTimes = partTimes.filter(p => p.id !== id);
+                saveData();
+            }
+        }
+
+        // ================= グラフ描画 =================
+        function renderCharts() {
+            const labels = tasks.map(t => t.title.length > 8 ? t.title.substring(0, 8) + '...' : t.title);
+            const wages = tasks.map(t => t.seconds > 0 ? Math.round(t.reward / (t.seconds / 3600)) : 0);
+            const hours = tasks.map(t => (t.seconds / 3600).toFixed(1));
+
+            const ctxWage = document.getElementById('wageChart').getContext('2d');
+            if (wageChartInstance) wageChartInstance.destroy();
+            wageChartInstance = new Chart(ctxWage, {
+                type: 'bar',
+                data: { labels: labels, datasets: [{ data: wages, backgroundColor: savedTheme === 'purple' ? '#a855f7' : savedTheme === 'emerald' ? '#10b981' : savedTheme === 'blue' ? '#3b82f6' : '#6366f1', borderRadius: 4 }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { color: '#334155' } }, x: { ticks: { color: '#94a3b8', font: { size: 10 } }, grid: { display: false } } } }
+            });
+
+            const ctxTime = document.getElementById('timeChart').getContext('2d');
+            if (timeChartInstance) timeChartInstance.destroy();
+            timeChartInstance = new Chart(ctxTime, {
+                type: 'doughnut',
+                data: { labels: labels, datasets: [{ data: hours, backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981'] }] },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', boxWidth: 10, font: { size: 10 } } } } }
+            });
+        }
+    </script>
+</body>
+</html>
