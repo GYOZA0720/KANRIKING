@@ -219,7 +219,6 @@
                     </div>
                 </div>
 
-                <!-- 今月の進行中＆完了タスク一覧（編集可能） -->
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-lg font-black text-slate-200">📋 今月の作業案件一覧（今月完了分含む・編集可）</h2>
@@ -265,7 +264,7 @@
                     </div>
                 </div>
 
-                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
                     <h2 class="text-lg font-black text-slate-200">💼 バイト勤務履歴 & 振込日一覧</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -285,8 +284,33 @@
                 </div>
             </div>
 
-            <!-- ================= 5. その他編集（設定 & 過去月アーカイブ）画面 ================= -->
+            <!-- ================= 5. その他編集（設定・同期・過去月アーカイブ）画面 ================= -->
             <div id="tab-settings" class="space-y-6 hidden">
+                <!-- データ共有（エクスポート・インポート）機能 (新追加) -->
+                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
+                        🔄 端末間データ共有 (PC ⇄ スマホ)
+                    </h2>
+                    <p class="text-xs text-slate-300">PCで入力したデータをスマホに移動したり、バックアップを取るための機能です。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
+                            <div class="text-sm font-bold text-white">1. データを書き出す (PC等で実行)</div>
+                            <p class="text-xs text-slate-400">現在のすべてのデータ（タスク、バイト、予定等）をファイルとして保存します。</p>
+                            <button onclick="exportData()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-black py-2.5 rounded-xl text-xs transition shadow">
+                                📥 データをダウンロード (.json)
+                            </button>
+                        </div>
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
+                            <div class="text-sm font-bold text-white">2. データを読み込む (スマホ等で実行)</div>
+                            <p class="text-xs text-slate-400">保存したファイルを選んで、アプリ内のデータを最新状態に置き換えます。</p>
+                            <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)">
+                            <button onclick="document.getElementById('import-file').click()" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-black py-2.5 rounded-xl text-xs transition shadow">
+                                📤 ファイルを選んで読み込む
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-5">
                         <h2 class="text-lg font-black text-slate-200 border-b border-slate-700 pb-3">🎨 テーマカラー変更</h2>
@@ -320,7 +344,7 @@
                     </div>
                 </div>
 
-                <!-- 過去月タスクアーカイブ（過ぎた月のみ） -->
+                <!-- 過去月タスクアーカイブ -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-700 pb-3">
                         <h2 class="text-lg font-black text-slate-200">📦 過去月タスクアーカイブ（過ぎた月）</h2>
@@ -532,7 +556,6 @@
             updateWorldClock();
         });
 
-        // 世界時計（日本時間）更新
         function updateWorldClock() {
             const now = new Date();
             const options = { timeZone: 'Asia/Tokyo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false };
@@ -588,6 +611,51 @@
             renderPartTimes();
             renderMemos();
             renderTaskArchives();
+        }
+
+        // ================= データ エクスポート・インポート機能 (新機能) =================
+        function exportData() {
+            const allData = {
+                tasks,
+                events,
+                partTimes,
+                memos,
+                trainSettings,
+                username: localStorage.getItem('kk_username'),
+                theme: localStorage.getItem('kk_theme')
+            };
+            const jsonStr = JSON.stringify(allData, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `kanri_king_backup_${new Date().toISOString().split('T')[0]}.json`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    if (imported.tasks) tasks = imported.tasks;
+                    if (imported.events) events = imported.events;
+                    if (imported.partTimes) partTimes = imported.partTimes;
+                    if (imported.memos) memos = imported.memos;
+                    if (imported.trainSettings) trainSettings = imported.trainSettings;
+                    if (imported.username) localStorage.setItem('kk_username', imported.username);
+                    if (imported.theme) localStorage.setItem('kk_theme', imported.theme);
+                    saveData();
+                    alert('データの読み込みが完了しました！アプリを最新状態にします。');
+                    location.reload();
+                } catch (err) {
+                    alert('ファイルの読み込みに失敗しました。正しくバックアップされたJSONファイルを選んでください。');
+                }
+            };
+            reader.readAsText(file);
         }
 
         function switchTab(tabName) {
@@ -750,7 +818,6 @@
             renderCalendar();
         }
 
-        // ================= カレンダー描画（本日の光るハイライト対応） =================
         function renderCalendar() {
             document.getElementById('calendar-title').textContent = `${currentYear}年 ${currentMonth + 1}月`;
             const grid = document.getElementById('calendar-grid');
@@ -778,7 +845,6 @@
                     `;
                 });
 
-                // 本日の場合は光るエフェクト（borderとglow）を付与
                 const boxStyle = isToday 
                     ? "bg-slate-900 border-2 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)] ring-2 ring-amber-400/50" 
                     : "bg-slate-900/80 border-2 border-slate-700/60";
@@ -831,7 +897,6 @@
             saveData();
         }
 
-        // ================= タスク管理（今月分＝進行中＋今月完了分を表示・編集可能） =================
         function renderTasks() {
             const tbody = document.getElementById('task-table-body');
             tbody.innerHTML = '';
@@ -839,11 +904,10 @@
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-            // 今月の案件（未着手・進行中、または今月完了した分）を表示
             const visibleTasks = tasks.filter(t => {
                 if (t.status !== '完了') return true;
                 const taskYm = t.duedate ? t.duedate.substring(0, 7) : '';
-                return taskYm === currentYm; // 今月完了分のみタスク画面に表示して編集可にする
+                return taskYm === currentYm;
             });
 
             if (visibleTasks.length === 0) {
@@ -880,7 +944,6 @@
             });
         }
 
-        // ================= 過去月タスクアーカイブ（過ぎた月のみ） =================
         function renderTaskArchives() {
             const container = document.getElementById('task-archive-container');
             container.innerHTML = '';
@@ -888,7 +951,6 @@
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-            // 過ぎた月（完了していて、かつ年月が今月より前）の案件を抽出
             const pastCompletedTasks = tasks.filter(t => {
                 if (t.status !== '完了' || !t.duedate) return false;
                 const taskYm = t.duedate.substring(0, 7);
