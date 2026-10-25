@@ -30,24 +30,24 @@
 
     <!-- ログイン画面 -->
     <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
-        <div class="bg-slate-900 border border-slate-800 rounded-3xl p-8 max-w-lg w-full shadow-2xl text-center">
+        <div class="bg-slate-900 border-2 border-amber-500/50 rounded-3xl p-8 max-w-lg w-full shadow-[0_0_30px_rgba(245,158,11,0.2)] text-center">
             <div class="mb-6">
-                <img src="icon.jpg" alt="KANRI KING" onerror="this.src='https://via.placeholder.com/100?text=KING'" class="w-24 h-24 rounded-3xl mx-auto object-cover border-4 border-theme-500 shadow-xl shadow-theme-500/30 mb-4">
-                <h1 class="text-3xl font-black tracking-wider text-white">KANRI KING</h1>
-                <p class="text-slate-400 text-sm mt-1">最強のオールインワン自己管理システム</p>
+                <img src="icon.jpg" alt="KANRI KING" onerror="this.src='https://via.placeholder.com/100?text=KING'" class="w-24 h-24 rounded-3xl mx-auto object-cover border-4 border-amber-400 shadow-xl shadow-amber-500/30 mb-4">
+                <h1 class="text-3xl font-black tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-600">KANRI KING</h1>
+                <p class="text-slate-400 text-sm mt-1">至高のオールインワン自己管理システム</p>
             </div>
             
             <form onsubmit="handleLogin(event)" class="space-y-5 text-left">
                 <div>
                     <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">ユーザー名</label>
-                    <input type="text" id="login-user" required placeholder="例: KANRI KING本人" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-theme-500">
+                    <input type="text" id="login-user" required placeholder="例: KANRI KING" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-amber-500">
                 </div>
                 <div>
                     <label class="block text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">アクセスPIN</label>
-                    <input type="password" id="login-pin" required placeholder="4桁以上の暗証番号" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-theme-500">
+                    <input type="password" id="login-pin" required placeholder="4桁以上の暗証番号" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3.5 text-white text-base focus:outline-none focus:border-amber-500">
                 </div>
-                <button type="submit" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-black py-4 rounded-xl transition shadow-xl shadow-theme-600/30 text-lg">
-                    KINGとしてログイン
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black py-4 rounded-xl transition shadow-xl shadow-amber-600/30 text-lg">
+                    KINGとして降臨
                 </button>
             </form>
         </div>
@@ -58,22 +58,23 @@
         <!-- ヘッダー＆タブナビゲーション -->
         <header class="bg-slate-800 border-b-2 border-slate-700 sticky top-0 z-40 px-4 md:px-8 py-4 flex flex-col md:flex-row justify-between items-center shadow-xl gap-4">
             <div class="flex items-center space-x-3">
-                <img src="icon.jpg" alt="Icon" onerror="this.src='https://via.placeholder.com/50?text=KING'" class="w-12 h-12 rounded-2xl object-cover border-2 border-theme-500 shadow-md">
+                <img src="icon.jpg" alt="Icon" onerror="this.src='https://via.placeholder.com/50?text=KING'" class="w-12 h-12 rounded-2xl object-cover border-2 border-amber-400 shadow-md">
                 <h1 class="text-xl font-black tracking-wider text-white flex items-center gap-2">
-                    KANRI KING <span class="text-xs bg-theme-500/20 text-theme-500 px-2.5 py-1 rounded-full font-bold">皇帝仕様</span>
+                    KANRI KING <span class="text-xs bg-amber-500/20 text-amber-400 border border-amber-500/40 px-2.5 py-1 rounded-full font-bold">皇帝仕様</span>
                 </h1>
             </div>
             
-            <nav class="flex flex-wrap justify-center gap-2 bg-slate-900 p-1.5 rounded-2xl border border-slate-700">
-                <button onclick="switchTab('home')" id="tab-btn-home" class="px-4 py-2 rounded-xl font-bold transition bg-theme-600 text-white text-sm">ホーム</button>
-                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="px-4 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white text-sm">カレンダー</button>
-                <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="px-4 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white text-sm">タスク</button>
-                <button onclick="switchTab('parttime')" id="tab-btn-parttime" class="px-4 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white text-sm">バイト</button>
-                <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-4 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white text-sm">その他編集</button>
+            <nav class="flex flex-wrap justify-center gap-1.5 bg-slate-900 p-1.5 rounded-2xl border border-slate-700 text-sm">
+                <button onclick="switchTab('home')" id="tab-btn-home" class="px-3.5 py-2 rounded-xl font-bold transition bg-theme-600 text-white">ホーム</button>
+                <button onclick="switchTab('calendar')" id="tab-btn-calendar" class="px-3.5 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white">カレンダー</button>
+                <button onclick="switchTab('univ')" id="tab-btn-univ" class="px-3.5 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white">大学時間割</button>
+                <button onclick="switchTab('tasks')" id="tab-btn-tasks" class="px-3.5 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white">タスク</button>
+                <button onclick="switchTab('parttime')" id="tab-btn-parttime" class="px-3.5 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white">バイト</button>
+                <button onclick="switchTab('settings')" id="tab-btn-settings" class="px-3.5 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white">その他編集</button>
             </nav>
 
             <div class="flex items-center space-x-4">
-                <span id="display-username" class="text-sm bg-slate-700 text-theme-500 px-4 py-1.5 rounded-full font-black"></span>
+                <span id="display-username" class="text-sm bg-slate-700 text-amber-400 px-4 py-1.5 rounded-full font-black border border-amber-500/30"></span>
                 <button onclick="handleLogout()" class="text-xs bg-slate-700 hover:bg-rose-600 text-slate-300 px-3.5 py-2 rounded-xl font-bold transition">ログアウト</button>
             </div>
         </header>
@@ -84,57 +85,67 @@
             <!-- ================= 1. ホーム画面 ================= -->
             <div id="tab-home" class="space-y-8">
                 <!-- 装飾フレーズ ＆ 世界時計 -->
-                <div class="flex flex-col md:flex-row justify-between items-center py-4 px-6 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-y-2 border-theme-500/40 rounded-2xl shadow-2xl gap-4">
-                    <h2 class="font-king text-xl md:text-3xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-theme-500 to-amber-400 drop-shadow-md">
+                <div class="flex flex-col md:flex-row justify-between items-center py-4 px-6 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-y-2 border-amber-500/50 rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.15)] gap-4">
+                    <h2 class="font-king text-xl md:text-3xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 drop-shadow-md">
                         「天は鳴き、大地は震える。」
                     </h2>
-                    <div class="bg-slate-950/80 px-5 py-2 rounded-xl border border-slate-700 text-right shadow-inner">
-                        <div class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">世界時計 (日本 / JST)</div>
-                        <div id="world-clock-jst" class="text-lg font-mono font-black text-emerald-400">--:--:--</div>
+                    <div class="bg-slate-950/90 px-5 py-2.5 rounded-xl border border-amber-500/30 text-right shadow-inner">
+                        <div class="text-[10px] text-amber-400/80 font-bold uppercase tracking-wider">世界時計 (日本 / JST)</div>
+                        <div id="world-clock-jst" class="text-lg font-mono font-black text-amber-300">--:--:--</div>
                     </div>
                 </div>
 
-                <!-- 収支＆電車ウィジェット -->
+                <!-- 収支ボード ＆ 家を出るべき時間ウィジェット -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl flex flex-col justify-between">
-                        <div>
-                            <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">今月の総収入（タスク ＋ バイト）</div>
-                            <div class="text-4xl font-black text-emerald-400" id="home-total-income">¥0</div>
+                    <!-- 収入詳細ボード -->
+                    <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
+                        <div class="flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">今月の収入内訳</span>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-xs text-slate-400 font-bold">集計年:</span>
+                                <select id="home-year-select" onchange="renderHome()" class="bg-slate-900 text-amber-400 font-bold px-2.5 py-1 rounded-lg border border-slate-700 text-xs">
+                                    <option value="2026">2026年</option>
+                                    <option value="2027">2027年</option>
+                                    <option value="2028">2028年</option>
+                                </select>
+                            </div>
                         </div>
-                        <div class="text-sm text-slate-300 mt-6 flex justify-between border-t border-slate-700 pt-3 font-semibold">
-                            <span>案件: <strong id="home-task-income" class="text-white">¥0</strong></span>
-                            <span>バイト: <strong id="home-pt-income" class="text-white">¥0</strong></span>
+                        <div class="grid grid-cols-3 gap-2 text-center bg-slate-900/60 p-3 rounded-xl border border-slate-700/60">
+                            <div>
+                                <div class="text-[10px] text-slate-400 font-bold">案件</div>
+                                <div class="text-base font-black text-emerald-400 truncate" id="home-task-income">¥0</div>
+                            </div>
+                            <div class="border-x border-slate-700">
+                                <div class="text-[10px] text-slate-400 font-bold">バイト</div>
+                                <div class="text-base font-black text-emerald-400 truncate" id="home-pt-income">¥0</div>
+                            </div>
+                            <div>
+                                <div class="text-[10px] text-slate-400 font-bold">合計</div>
+                                <div class="text-base font-black text-amber-400 truncate" id="home-total-income">¥0</div>
+                            </div>
+                        </div>
+                        <div class="border-t border-slate-700 pt-3 flex justify-between items-center">
+                            <span class="text-xs font-bold text-slate-400">年間総収入 (<span id="display-year-label">2026</span>年)</span>
+                            <span class="text-xl font-black text-amber-300" id="home-yearly-income">¥0</span>
                         </div>
                     </div>
 
-                    <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl md:col-span-2 flex flex-col justify-between">
-                        <div class="flex justify-between items-center mb-3">
-                            <div class="text-sm font-black text-slate-300 flex items-center gap-2">
-                                <span>🚆 電車発車時刻表</span>
-                                <span id="train-route-label" class="bg-slate-700 text-indigo-300 px-2.5 py-0.5 rounded-lg text-xs">最寄り → 到着</span>
-                            </div>
-                            <button onclick="switchTab('settings')" class="text-xs text-theme-500 hover:underline font-bold">時刻表を編集 →</button>
+                    <!-- 家を出るべき時間ウィジェット (新機能) -->
+                    <div class="bg-slate-800 border-2 border-amber-500/40 p-6 rounded-2xl shadow-xl md:col-span-2 flex flex-col justify-between bg-gradient-to-br from-slate-800 via-slate-800 to-amber-950/30">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
+                                <span>🚶‍♂️ 本日の出発リミット</span>
+                            </span>
+                            <span id="home-today-date-label" class="text-xs text-slate-400 font-bold">--月--日</span>
                         </div>
-                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 flex justify-between items-center shadow-inner">
-                                <div>
-                                    <div class="text-xs text-slate-400 font-bold">次に来る電車 (1本目)</div>
-                                    <div class="text-2xl font-mono font-black text-white" id="train-next-1">--:--</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-xs text-slate-400 font-bold">発車まで</div>
-                                    <div class="text-base font-black text-theme-500" id="train-countdown-1">--分後</div>
-                                </div>
+                        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-900/80 p-4 rounded-xl border border-amber-500/30 shadow-inner gap-4">
+                            <div>
+                                <div class="text-xs text-slate-400 font-bold">本日の最早授業から算出（1時間前）</div>
+                                <div class="text-3xl md:text-4xl font-mono font-black text-amber-300 mt-1" id="home-departure-time">--:-- までに出発</div>
                             </div>
-                            <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 flex justify-between items-center shadow-inner">
-                                <div>
-                                    <div class="text-xs text-slate-400 font-bold">その次 (2本目)</div>
-                                    <div class="text-2xl font-mono font-black text-slate-300" id="train-next-2">--:--</div>
-                                </div>
-                                <div class="text-right">
-                                    <div class="text-xs text-slate-400 font-bold">発車まで</div>
-                                    <div class="text-base font-black text-slate-400" id="train-countdown-2">--分後</div>
-                                </div>
+                            <div class="text-right sm:max-w-[200px]">
+                                <div class="text-[11px] text-slate-400 font-bold">最初の授業</div>
+                                <div class="text-sm font-black text-white truncate" id="home-first-class">本日の講義はありません</div>
                             </div>
                         </div>
                     </div>
@@ -144,7 +155,7 @@
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-lg font-black text-amber-400 flex items-center gap-2">📌 絶対に忘れてはいけないこと（KINGメモ）</h2>
-                        <button onclick="openMemoModal()" class="bg-amber-600 hover:bg-amber-500 text-white px-4 py-2 rounded-xl text-xs font-bold transition shadow">＋ メモを追加</button>
+                        <button onclick="openMemoModal()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow">＋ メモを追加</button>
                     </div>
                     <div id="home-memo-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4"></div>
                 </div>
@@ -184,7 +195,45 @@
                 </div>
             </div>
 
-            <!-- ================= 3. タスク管理画面 ================= -->
+            <!-- ================= 3. 大学時間割画面 (新機能) ================= -->
+            <div id="tab-univ" class="space-y-6 hidden">
+                <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
+                    <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-700 pb-4">
+                        <div>
+                            <h2 class="text-xl font-black text-white flex items-center gap-2">🎓 大学時間割マネージャー</h2>
+                            <p class="text-xs text-slate-400 mt-1">前期・後期の時間割を設定すると、自動的にカレンダーと出発リミットに同期されます。</p>
+                        </div>
+                        <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-700">
+                            <button onclick="setUnivSemester('zenki')" id="univ-sem-zenki" class="px-5 py-2 rounded-xl text-sm font-black transition bg-amber-600 text-slate-950 shadow">前期 (4月〜9月)</button>
+                            <button onclick="setUnivSemester('kouki')" id="univ-sem-kouki" class="px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white">後期 (10月〜3月)</button>
+                        </div>
+                    </div>
+
+                    <!-- 時間割テーブル -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-center border-collapse text-sm">
+                            <thead>
+                                <tr class="bg-slate-900 text-xs font-black text-slate-400 uppercase border-b-2 border-slate-700">
+                                    <th class="py-3 px-2 w-24">時限 / 時間</th>
+                                    <th class="py-3 px-2">月曜</th>
+                                    <th class="py-3 px-2">火曜</th>
+                                    <th class="py-3 px-2">水曜</th>
+                                    <th class="py-3 px-2">木曜</th>
+                                    <th class="py-3 px-2">金曜</th>
+                                </tr>
+                            </thead>
+                            <tbody id="univ-timetable-body" class="divide-y divide-slate-700/80"></tbody>
+                        </table>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="saveUnivTimetable()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-6 py-3 rounded-xl shadow-lg text-sm transition">
+                            時間割を保存して同期する
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ================= 4. タスク管理画面 ================= -->
             <div id="tab-tasks" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl flex flex-col justify-between">
@@ -220,20 +269,29 @@
                 </div>
 
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                    <div class="flex justify-between items-center">
-                        <h2 class="text-lg font-black text-slate-200">📋 今月の作業案件一覧（今月完了分含む・編集可）</h2>
-                        <button onclick="openTaskModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-5 py-2.5 rounded-xl text-sm font-black shadow-lg">＋ 新規案件を追加</button>
+                    <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                        <h2 class="text-lg font-black text-slate-200">📋 今月の作業案件一覧</h2>
+                        <div class="flex items-center space-x-3">
+                            <!-- カテゴリフィルター -->
+                            <select id="task-filter-cat" onchange="renderTasks()" class="bg-slate-900 text-slate-300 font-bold px-3 py-2 rounded-xl border border-slate-700 text-xs">
+                                <option value="all">全カテゴリ</option>
+                                <option value="動画編集">動画編集</option>
+                                <option value="イラスト制作">イラスト制作</option>
+                                <option value="その他">その他</option>
+                            </select>
+                            <button onclick="openTaskModal()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 px-5 py-2.5 rounded-xl text-sm font-black shadow-lg transition">＋ 新規案件を追加</button>
+                        </div>
                     </div>
 
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
                                 <tr class="border-b-2 border-slate-700 text-xs font-black text-slate-400 uppercase">
-                                    <th class="py-4 px-4">案件名 / 概要</th>
+                                    <th class="py-4 px-4">カテゴリ / 案件名</th>
                                     <th class="py-4 px-4">納期</th>
                                     <th class="py-4 px-4">依頼料</th>
                                     <th class="py-4 px-4">作業時間</th>
-                                    <th class="py-4 px-4">実質時給 / ランク</th>
+                                    <th class="py-4 px-4">実質時給 / KANRI KING 称号</th>
                                     <th class="py-4 px-4">ステータス</th>
                                     <th class="py-4 px-4 text-right">操作</th>
                                 </tr>
@@ -244,7 +302,7 @@
                 </div>
             </div>
 
-            <!-- ================= 4. バイト管理画面 ================= -->
+            <!-- ================= 5. バイト管理画面 ================= -->
             <div id="tab-parttime" class="space-y-6 hidden">
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl">
@@ -260,12 +318,12 @@
                             <div class="text-xs font-bold text-slate-400 uppercase mb-1">シフト・給与記録</div>
                             <div class="text-base font-black text-white">振込日トラッカー</div>
                         </div>
-                        <button onclick="openPtModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-5 py-3 rounded-xl text-sm font-black shadow-lg">＋ バイト追加</button>
+                        <button onclick="openPtModal()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 px-5 py-3 rounded-xl text-sm font-black shadow-lg transition">＋ バイト追加</button>
                     </div>
                 </div>
 
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
-                    <h2 class="text-lg font-black text-slate-200">💼 バイト勤務履歴 & 振込日一覧</h2>
+                    <h2 class="text-lg font-black text-slate-200">💼 今月のバイト勤務履歴 & 振込日一覧</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
@@ -284,9 +342,9 @@
                 </div>
             </div>
 
-            <!-- ================= 5. その他編集（設定・同期・過去月アーカイブ）画面 ================= -->
+            <!-- ================= 6. その他編集（設定・アーカイブ）画面 ================= -->
             <div id="tab-settings" class="space-y-6 hidden">
-                <!-- データ共有（エクスポート・インポート）機能 (新追加) -->
+                <!-- 端末間データ共有 -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
                         🔄 端末間データ共有 (PC ⇄ スマホ)
@@ -294,15 +352,13 @@
                     <p class="text-xs text-slate-300">PCで入力したデータをスマホに移動したり、バックアップを取るための機能です。</p>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
-                            <div class="text-sm font-bold text-white">1. データを書き出す (PC等で実行)</div>
-                            <p class="text-xs text-slate-400">現在のすべてのデータ（タスク、バイト、予定等）をファイルとして保存します。</p>
-                            <button onclick="exportData()" class="w-full bg-amber-600 hover:bg-amber-500 text-white font-black py-2.5 rounded-xl text-xs transition shadow">
+                            <div class="text-sm font-bold text-white">1. データを書き出す (PC等)</div>
+                            <button onclick="exportData()" class="w-full bg-amber-600 hover:bg-amber-500 text-slate-950 font-black py-2.5 rounded-xl text-xs transition shadow">
                                 📥 データをダウンロード (.json)
                             </button>
                         </div>
                         <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-2">
-                            <div class="text-sm font-bold text-white">2. データを読み込む (スマホ等で実行)</div>
-                            <p class="text-xs text-slate-400">保存したファイルを選んで、アプリ内のデータを最新状態に置き換えます。</p>
+                            <div class="text-sm font-bold text-white">2. データを読み込む (スマホ等)</div>
                             <input type="file" id="import-file" accept=".json" class="hidden" onchange="importData(event)">
                             <button onclick="document.getElementById('import-file').click()" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-black py-2.5 rounded-xl text-xs transition shadow">
                                 📤 ファイルを選んで読み込む
@@ -322,25 +378,10 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-5">
-                        <h2 class="text-lg font-black text-slate-200 border-b border-slate-700 pb-3">🚆 電車時刻表・路線設定</h2>
-                        <form onsubmit="saveTrainSettings(event)" class="space-y-4 text-sm">
-                            <div class="grid grid-cols-2 gap-3">
-                                <div>
-                                    <label class="block text-slate-400 font-bold mb-1">最寄り駅</label>
-                                    <input type="text" id="setting-from-station" required class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                                </div>
-                                <div>
-                                    <label class="block text-slate-400 font-bold mb-1">到着駅</label>
-                                    <input type="text" id="setting-to-station" required class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl px-4 py-2.5 text-white">
-                                </div>
-                            </div>
-                            <div>
-                                <label class="block text-slate-400 font-bold mb-1">発車時刻リスト (カンマ区切り)</label>
-                                <textarea id="setting-train-times" rows="3" required class="w-full bg-slate-900 border-2 border-slate-700 rounded-xl px-4 py-2.5 text-white font-mono"></textarea>
-                            </div>
-                            <button type="submit" class="w-full bg-theme-600 hover:bg-theme-500 text-white font-black py-3 rounded-xl transition shadow">時刻表を保存</button>
-                        </form>
+                    <!-- バイトアーカイブ (新機能) -->
+                    <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                        <h2 class="text-lg font-black text-slate-200 border-b border-slate-700 pb-3">💼 過去月バイトアーカイブ</h2>
+                        <div id="pt-archive-container" class="space-y-3 max-h-48 overflow-y-auto"></div>
                     </div>
                 </div>
 
@@ -360,15 +401,15 @@
     <!-- モーダル系 -->
     <div id="memo-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <h3 class="text-xl font-black text-white">絶対に忘れてはいけないメモ追加</h3>
+            <h3 class="text-xl font-black text-white">KINGメモ追加</h3>
             <form onsubmit="saveMemo(event)" class="space-y-4 text-sm">
                 <div>
                     <label class="block font-bold text-slate-400 mb-1">メモの内容</label>
-                    <textarea id="memo-content" rows="3" required placeholder="例: 木曜の授業は必ず課題提出！" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base"></textarea>
+                    <textarea id="memo-content" rows="3" required placeholder="例: 課題提出を忘れない！" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base"></textarea>
                 </div>
                 <div class="flex justify-end space-x-3 pt-2">
                     <button type="button" onclick="closeMemoModal()" class="bg-slate-800 text-slate-300 px-5 py-2.5 rounded-xl font-bold">キャンセル</button>
-                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-white font-black px-5 py-2.5 rounded-xl shadow">追加する</button>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl shadow">追加する</button>
                 </div>
             </form>
         </div>
@@ -380,7 +421,7 @@
             <form onsubmit="saveEvent(event)" class="space-y-4 text-sm">
                 <div>
                     <label class="block font-bold text-slate-400 mb-1">予定名（タイトル）</label>
-                    <input type="text" id="ev-title" required placeholder="例: 3Dモデリング演習 / バイト" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                    <input type="text" id="ev-title" required placeholder="例: デート / サークル" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -404,14 +445,23 @@
         </div>
     </div>
 
+    <!-- タスク追加・編集モーダル (カテゴリタブ付き) -->
     <div id="task-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 class="text-xl font-black text-white">フリーランス案件の登録・編集</h3>
             <form onsubmit="saveTask(event)" class="space-y-4 text-sm">
                 <input type="hidden" id="task-edit-id">
                 <div>
+                    <label class="block font-bold text-slate-400 mb-1">カテゴリ選択</label>
+                    <div class="grid grid-cols-3 gap-2">
+                        <button type="button" onclick="setTaskCategory('動画編集')" id="tcat-video" class="py-2 rounded-xl text-xs font-black transition bg-amber-600 text-slate-950 shadow">動画編集</button>
+                        <button type="button" onclick="setTaskCategory('イラスト制作')" id="tcat-illust" class="py-2 rounded-xl text-xs font-black transition bg-slate-800 text-slate-300">イラスト制作</button>
+                        <button type="button" onclick="setTaskCategory('その他')" id="tcat-other" class="py-2 rounded-xl text-xs font-black transition bg-slate-800 text-slate-300">その他</button>
+                    </div>
+                </div>
+                <div>
                     <label class="block font-bold text-slate-400 mb-1">案件名 / 概要</label>
-                    <input type="text" id="task-title" required placeholder="例: YouTube動画編集" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                    <input type="text" id="task-title" required placeholder="例: YouTubeカット編集" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -439,19 +489,21 @@
                 </div>
                 <div class="flex justify-end space-x-3 pt-2">
                     <button type="button" onclick="closeTaskModal()" class="bg-slate-800 text-slate-300 px-5 py-2.5 rounded-xl font-bold">キャンセル</button>
-                    <button type="submit" class="bg-theme-600 text-white font-black px-5 py-2.5 rounded-xl shadow">保存する</button>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl shadow">保存する</button>
                 </div>
             </form>
         </div>
     </div>
 
+    <!-- バイト追加・編集モーダル -->
     <div id="pt-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
-            <h3 class="text-xl font-black text-white">バイト勤務・給与詳細登録</h3>
+            <h3 class="text-xl font-black text-white" id="modal-pt-title">バイト勤務・給与詳細登録</h3>
             <form onsubmit="savePt(event)" class="space-y-4 text-sm">
+                <input type="hidden" id="pt-edit-id">
                 <div>
                     <label class="block font-bold text-slate-400 mb-1">勤務先 / シフト名</label>
-                    <input type="text" id="pt-name" required placeholder="例: カフェ・塾講師" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
+                    <input type="text" id="pt-name" required placeholder="例: カフェ" class="w-full bg-slate-800 border-2 border-slate-700 rounded-xl px-4 py-3 text-white text-base">
                 </div>
                 <div class="grid grid-cols-2 gap-3">
                     <div>
@@ -489,7 +541,7 @@
                 </div>
                 <div class="flex justify-end space-x-3 pt-2">
                     <button type="button" onclick="closePtModal()" class="bg-slate-800 text-slate-300 px-5 py-2.5 rounded-xl font-bold">キャンセル</button>
-                    <button type="submit" class="bg-theme-600 text-white font-black px-5 py-2.5 rounded-xl shadow">追加する</button>
+                    <button type="submit" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl shadow">保存する</button>
                 </div>
             </form>
         </div>
@@ -497,20 +549,36 @@
 
     <!-- JavaScript ロジック -->
     <script>
-        let tasks = JSON.parse(localStorage.getItem('kk_tasks')) || [
-            { id: 1, title: 'YouTube案件カット編集', reward: 15000, duedate: '2026-10-30', seconds: 7200, status: '進行中' }
-        ];
-        let events = JSON.parse(localStorage.getItem('kk_events')) || [
-            { id: 1, type: 'univ', title: '3Dモデリング演習', date: '2026-10-26' }
-        ];
-        let partTimes = JSON.parse(localStorage.getItem('kk_parttimes')) || [
-            { id: 1, name: 'カフェバイト', date: '2026-10-15', hoursRaw: 6.17, baseWage: 1200, midnightHrs: 0, overtimeHrs: 0, transport: 600, payday: '2026-11-10' }
-        ];
-        let memos = JSON.parse(localStorage.getItem('kk_memos')) || [
-            { id: 1, content: '木曜の3D実習の課題を絶対に忘れないこと！' }
-        ];
-        let trainSettings = JSON.parse(localStorage.getItem('kk_train')) || {
-            from: '最寄り駅', to: '到着駅', times: ['07:15', '07:45', '08:12', '08:40', '09:15', '12:00', '18:20']
+        // 初期データはすべてまっさら（空）
+        let tasks = JSON.parse(localStorage.getItem('kk_tasks')) || [];
+        let events = JSON.parse(localStorage.getItem('kk_events')) || [];
+        let partTimes = JSON.parse(localStorage.getItem('kk_parttimes')) || [];
+        let memos = JSON.parse(localStorage.getItem('kk_memos')) || [];
+        
+        // 大学時間割 (前期・後期、月〜金、1〜5限)
+        let univTimetable = JSON.parse(localStorage.getItem('kk_univ_timetable')) || {
+            zenki: {
+                1: ["", "", "", "", ""],
+                2: ["", "", "", "", ""],
+                3: ["", "", "", "", ""],
+                4: ["", "", "", "", ""],
+                5: ["", "", "", "", ""]
+            },
+            kouki: {
+                1: ["", "", "", "", ""],
+                2: ["", "", "", "", ""],
+                3: ["", "", "", "", ""],
+                4: ["", "", "", "", ""],
+                5: ["", "", "", "", ""]
+            }
+        };
+
+        const classTimes = {
+            1: { start: "09:20", end: "10:50", leave: "08:20" },
+            2: { start: "11:00", end: "12:30", leave: "10:00" },
+            3: { start: "13:20", end: "14:50", leave: "12:20" },
+            4: { start: "15:00", end: "16:30", leave: "14:00" },
+            5: { start: "16:40", end: "18:10", leave: "15:40" }
         };
 
         let activeTaskId = null;
@@ -522,6 +590,8 @@
         let currentYear = new Date().getFullYear();
         let currentMonth = new Date().getMonth();
         let calMode = 'univ';
+        let currentUnivSemester = 'zenki';
+        let currentTaskCategory = '動画編集';
 
         function parseFormattedTime(num) {
             if (!num || isNaN(num)) return 0;
@@ -544,16 +614,17 @@
                 document.getElementById('main-app').classList.remove('hidden');
                 initApp();
             }
-            document.getElementById('setting-from-station').value = trainSettings.from;
-            document.getElementById('setting-to-station').value = trainSettings.to;
-            document.getElementById('setting-train-times').value = trainSettings.times.join(', ');
+            // 年のセレクト初期値に現在年を設定
+            const yearSel = document.getElementById('home-year-select');
+            if (yearSel) yearSel.value = new Date().getFullYear();
 
             setInterval(() => {
-                updateTrainTimetable();
                 updateWorldClock();
+                updateDepartureTimeWidget();
             }, 1000);
-            updateTrainTimetable();
             updateWorldClock();
+            updateDepartureTimeWidget();
+            renderUnivTimetableGrid();
         });
 
         function updateWorldClock() {
@@ -597,6 +668,8 @@
             renderPartTimes();
             renderMemos();
             renderTaskArchives();
+            renderPartTimeArchives();
+            renderUnivTimetableGrid();
         }
 
         function saveData() {
@@ -604,26 +677,18 @@
             localStorage.setItem('kk_events', JSON.stringify(events));
             localStorage.setItem('kk_parttimes', JSON.stringify(partTimes));
             localStorage.setItem('kk_memos', JSON.stringify(memos));
-            localStorage.setItem('kk_train', JSON.stringify(trainSettings));
+            localStorage.setItem('kk_univ_timetable', JSON.stringify(univTimetable));
             renderHome();
             renderCalendar();
             renderTasks();
             renderPartTimes();
             renderMemos();
             renderTaskArchives();
+            renderPartTimeArchives();
         }
 
-        // ================= データ エクスポート・インポート機能 (新機能) =================
         function exportData() {
-            const allData = {
-                tasks,
-                events,
-                partTimes,
-                memos,
-                trainSettings,
-                username: localStorage.getItem('kk_username'),
-                theme: localStorage.getItem('kk_theme')
-            };
+            const allData = { tasks, events, partTimes, memos, univTimetable, username: localStorage.getItem('kk_username'), theme: localStorage.getItem('kk_theme') };
             const jsonStr = JSON.stringify(allData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -645,35 +710,36 @@
                     if (imported.events) events = imported.events;
                     if (imported.partTimes) partTimes = imported.partTimes;
                     if (imported.memos) memos = imported.memos;
-                    if (imported.trainSettings) trainSettings = imported.trainSettings;
+                    if (imported.univTimetable) univTimetable = imported.univTimetable;
                     if (imported.username) localStorage.setItem('kk_username', imported.username);
                     if (imported.theme) localStorage.setItem('kk_theme', imported.theme);
                     saveData();
-                    alert('データの読み込みが完了しました！アプリを最新状態にします。');
+                    alert('データの読み込みが完了しました！');
                     location.reload();
                 } catch (err) {
-                    alert('ファイルの読み込みに失敗しました。正しくバックアップされたJSONファイルを選んでください。');
+                    alert('ファイルの読み込みに失敗しました。');
                 }
             };
             reader.readAsText(file);
         }
 
         function switchTab(tabName) {
-            ['home', 'calendar', 'tasks', 'parttime', 'settings'].forEach(t => {
+            ['home', 'calendar', 'univ', 'tasks', 'parttime', 'settings'].forEach(t => {
                 const el = document.getElementById(`tab-${t}`);
                 if (el) el.classList.add('hidden');
                 const btn = document.getElementById(`tab-btn-${t}`);
-                if (btn) btn.className = "px-4 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white text-sm";
+                if (btn) btn.className = "px-3.5 py-2 rounded-xl font-bold transition text-slate-300 hover:text-white";
             });
             const targetEl = document.getElementById(`tab-${tabName}`);
             if (targetEl) targetEl.classList.remove('hidden');
             const targetBtn = document.getElementById(`tab-btn-${tabName}`);
-            if (targetBtn) targetBtn.className = "px-4 py-2 rounded-xl font-bold transition bg-theme-600 text-white text-sm";
+            if (targetBtn) targetBtn.className = "px-3.5 py-2 rounded-xl font-bold transition bg-theme-600 text-white";
             if (tabName === 'tasks') renderCharts();
         }
 
+        // ================= KANRI KING 豪華称号・演出 =================
         function getRankInfo(wage) {
-            if (wage >= 2500) return { name: '🔥 編集の王', color: 'bg-rose-500/20 text-rose-300 border border-rose-500/50' };
+            if (wage >= 2500) return { name: '🔥 KANRI KING', color: 'bg-gradient-to-r from-amber-500/30 to-amber-600/30 text-amber-300 border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)] animate-pulse' };
             if (wage >= 2000) return { name: '✨ やりますねぇ！', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/50' };
             if (wage >= 1500) return { name: '🏆 ランク A', color: 'bg-indigo-500/20 text-indigo-300 border border-indigo-500/50' };
             if (wage >= 1200) return { name: '💪 ランク B', color: 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/50' };
@@ -681,53 +747,91 @@
             return { name: '📌 ランク D', color: 'bg-slate-700 text-slate-300' };
         }
 
-        function updateTrainTimetable() {
-            document.getElementById('train-route-label').textContent = `${trainSettings.from} → ${trainSettings.to}`;
-            const now = new Date();
-            const currentMinutes = now.getHours() * 60 + now.getMinutes();
-            const currentSecs = now.getSeconds();
+        // ================= 大学時間割 & 出発リミット計算 =================
+        function setUnivSemester(sem) {
+            currentUnivSemester = sem;
+            document.getElementById('univ-sem-zenki').className = sem === 'zenki' ? "px-5 py-2 rounded-xl text-sm font-black transition bg-amber-600 text-slate-950 shadow" : "px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white";
+            document.getElementById('univ-sem-kouki').className = sem === 'kouki' ? "px-5 py-2 rounded-xl text-sm font-black transition bg-amber-600 text-slate-950 shadow" : "px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white";
+            renderUnivTimetableGrid();
+        }
 
-            const sortedTimes = trainSettings.times.map(t => {
-                const [h, m] = t.split(':').map(Number);
-                return { str: t, mins: h * 60 + m };
-            }).sort((a, b) => a.mins - b.mins);
+        function renderUnivTimetableGrid() {
+            const tbody = document.getElementById('univ-timetable-body');
+            tbody.innerHTML = '';
+            const data = univTimetable[currentUnivSemester];
 
-            let upcoming = sortedTimes.filter(item => item.mins >= currentMinutes);
-            if (upcoming.length === 0 && sortedTimes.length > 0) upcoming = sortedTimes;
-
-            const t1 = upcoming[0] || { str: '--:--', mins: 0 };
-            const t2 = upcoming[1] || { str: '--:--', mins: 0 };
-
-            document.getElementById('train-next-1').textContent = t1.str;
-            document.getElementById('train-next-2').textContent = t2.str;
-
-            const diff1 = t1.mins - currentMinutes;
-            const diffSec1 = (diff1 * 60) - currentSecs;
-            if (t1.str !== '--:--' && diffSec1 >= 0) {
-                const m = Math.floor(diffSec1 / 60);
-                const s = diffSec1 % 60;
-                document.getElementById('train-countdown-1').textContent = m > 0 ? `${m}分 ${s}秒後` : `${s}秒後`;
-            } else {
-                document.getElementById('train-countdown-1').textContent = '間もなく';
-            }
-
-            const diff2 = t2.mins - currentMinutes;
-            if (t2.str !== '--:--' && diff2 >= 0) {
-                document.getElementById('train-countdown-2').textContent = `約 ${diff2}分後`;
-            } else {
-                document.getElementById('train-countdown-2').textContent = '--';
+            for (let period = 1; period <= 5; period++) {
+                const info = classTimes[period];
+                let rowHtml = `<td class="py-3 px-2 font-mono text-xs text-amber-400 font-bold">${period}限<br><span class="text-[10px] text-slate-400">${info.start}~${info.end}</span></td>`;
+                for (let dayIdx = 0; dayIdx < 5; dayIdx++) {
+                    const val = data[period][dayIdx] || '';
+                    rowHtml += `
+                        <td class="py-2 px-1">
+                            <input type="text" value="${val}" data-period="${period}" data-day="${dayIdx}" placeholder="講義名" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-white text-xs text-center focus:border-amber-500 univ-input">
+                        </td>
+                    `;
+                }
+                tbody.innerHTML += `<tr>${rowHtml}</tr>`;
             }
         }
 
-        function saveTrainSettings(e) {
-            e.preventDefault();
-            trainSettings.from = document.getElementById('setting-from-station').value;
-            trainSettings.to = document.getElementById('setting-to-station').value;
-            trainSettings.times = document.getElementById('setting-train-times').value.split(',').map(s => s.trim()).filter(Boolean);
+        function saveUnivTimetable() {
+            const inputs = document.querySelectorAll('.univ-input');
+            inputs.forEach(input => {
+                const p = input.getAttribute('data-period');
+                const d = input.getAttribute('data-day');
+                univTimetable[currentUnivSemester][p][d] = input.value.trim();
+            });
             saveData();
-            alert('電車時刻表を更新しました！');
+            alert('大学時間割を保存し、カレンダーと同期しました！');
         }
 
+        // 本日の出発時間・最早授業の計算
+        function updateDepartureTimeWidget() {
+            const now = new Date();
+            const m = now.getMonth() + 1;
+            const isZenki = (m >= 4 && m <= 9);
+            const semKey = isZenki ? 'zenki' : 'kouki';
+            
+            // 0:日, 1:月, 2:火, 3:水, 4:木, 5:金, 6:土
+            const dayOfWeek = now.getDay();
+            const todayDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+            
+            document.getElementById('home-today-date-label').textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
+
+            let earliestPeriod = null;
+            let className = "";
+
+            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                const dayIdx = dayOfWeek - 1;
+                const timetable = univTimetable[semKey];
+                for (let p = 1; p <= 5; p++) {
+                    const cName = timetable[p][dayIdx];
+                    if (cName) {
+                        earliestPeriod = p;
+                        className = cName;
+                        break; // 1限から順に見て最初のものを最早とする
+                    }
+                }
+            }
+
+            // 一般予定や大学単発イベントもチェック
+            const todayEvents = events.filter(e => e.date === todayDateStr);
+            
+            const depEl = document.getElementById('home-departure-time');
+            const classEl = document.getElementById('home-first-class');
+
+            if (earliestPeriod !== null) {
+                const leaveTime = classTimes[earliestPeriod].leave;
+                depEl.textContent = `${leaveTime} までに出発`;
+                classEl.textContent = `${earliestPeriod}限: ${className} (${classTimes[earliestPeriod].start}開始)`;
+            } else {
+                depEl.textContent = "出発リミットなし";
+                classEl.textContent = todayEvents.length > 0 ? todayEvents[0].title : "本日の講義・予定なし";
+            }
+        }
+
+        // ================= KINGメモ =================
         function renderMemos() {
             const container = document.getElementById('home-memo-container');
             container.innerHTML = memos.length === 0 ? '<div class="text-sm text-slate-500 col-span-full">メモはありません。</div>' : '';
@@ -755,12 +859,16 @@
             saveData();
         }
 
+        // ================= ホーム画面・年間収支集計 =================
         function renderHome() {
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            
+            const selectedYear = document.getElementById('home-year-select')?.value || String(now.getFullYear());
+            document.getElementById('display-year-label').textContent = selectedYear;
+
+            // 今月収入計算
             let taskInc = 0;
-            tasks.forEach(t => { if (t.status === '完了') taskInc += t.reward; });
+            tasks.forEach(t => { if (t.status === '完了' && t.duedate && t.duedate.startsWith(currentYm)) taskInc += t.reward; });
 
             let ptInc = 0;
             partTimes.forEach(p => {
@@ -775,24 +883,69 @@
                 }
             });
 
-            document.getElementById('home-total-income').textContent = `¥${Math.round(taskInc + ptInc).toLocaleString()}`;
             document.getElementById('home-task-income').textContent = `¥${taskInc.toLocaleString()}`;
             document.getElementById('home-pt-income').textContent = `¥${Math.round(ptInc).toLocaleString()}`;
+            document.getElementById('home-total-income').textContent = `¥${Math.round(taskInc + ptInc).toLocaleString()}`;
 
+            // 年間総収入計算
+            let yearlyTotal = 0;
+            tasks.forEach(t => {
+                if (t.status === '完了' && t.duedate && t.duedate.startsWith(selectedYear)) yearlyTotal += t.reward;
+            });
+            partTimes.forEach(p => {
+                if (p.date && p.date.startsWith(selectedYear)) {
+                    const totalHours = parseFormattedTime(p.hoursRaw);
+                    const midHours = parseFormattedTime(p.midnightHrs);
+                    const overHours = parseFormattedTime(p.overtimeHrs);
+                    const basePay = totalHours * (p.baseWage || 0);
+                    const midPay = midHours * (p.baseWage || 0) * 0.25;
+                    const overPay = overHours * (p.baseWage || 0) * 0.25;
+                    yearlyTotal += (basePay + midPay + overPay + (p.transport || 0));
+                }
+            });
+            document.getElementById('home-yearly-income').textContent = `¥${Math.round(yearlyTotal).toLocaleString()}`;
+
+            // 本日の予定
             const todayStr = now.toISOString().split('T')[0];
-            const todayEvents = events.filter(e => e.date === todayStr);
+            const dayOfWeek = now.getDay();
+            const m = now.getMonth() + 1;
+            const semKey = (m >= 4 && m <= 9) ? 'zenki' : 'kouki';
+            
             const evContainer = document.getElementById('home-today-events');
-            evContainer.innerHTML = todayEvents.length === 0 ? '<div class="text-sm text-slate-500">本日の予定はありません。</div>' : '';
+            evContainer.innerHTML = '';
+
+            // 大学時間割の授業を本日の予定として表示
+            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
+                const dayIdx = dayOfWeek - 1;
+                const timetable = univTimetable[semKey];
+                for (let p = 1; p <= 5; p++) {
+                    const cName = timetable[p][dayIdx];
+                    if (cName) {
+                        evContainer.innerHTML += `
+                            <div class="bg-slate-900/80 p-3.5 rounded-xl border border-amber-500/30 flex justify-between items-center text-sm shadow">
+                                <span class="px-2.5 py-1 rounded-lg font-bold text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40">${p}限 (${classTimes[p].start})</span>
+                                <span class="text-white font-bold ml-3 flex-1">${cName}</span>
+                            </div>
+                        `;
+                    }
+                }
+            }
+
+            const todayEvents = events.filter(e => e.date === todayStr);
             todayEvents.forEach(ev => {
-                const badge = ev.type === 'univ' ? 'bg-amber-500/20 text-amber-300 border border-amber-500/40' : 'bg-theme-500/20 text-theme-300 border border-theme-500/40';
                 evContainer.innerHTML += `
                     <div class="bg-slate-900/80 p-3.5 rounded-xl border border-slate-700 flex justify-between items-center text-sm shadow">
-                        <span class="px-2.5 py-1 rounded-lg font-bold text-xs ${badge}">${ev.type === 'univ' ? '大学講義' : '一般予定'}</span>
+                        <span class="px-2.5 py-1 rounded-lg font-bold text-xs bg-theme-500/20 text-theme-300">一般予定</span>
                         <span class="text-white font-bold ml-3 flex-1">${ev.title}</span>
                     </div>
                 `;
             });
 
+            if (evContainer.innerHTML === '') {
+                evContainer.innerHTML = '<div class="text-sm text-slate-500">本日の講義・予定はありません。</div>';
+            }
+
+            // 1週間以内のタスク
             const nextWeek = new Date();
             nextWeek.setDate(now.getDate() + 7);
             const urgentTasks = tasks.filter(t => t.status !== '完了' && new Date(t.duedate) >= now && new Date(t.duedate) <= nextWeek);
@@ -811,6 +964,7 @@
             });
         }
 
+        // ================= カレンダー管理 =================
         function setCalMode(mode) {
             calMode = mode;
             document.getElementById('cal-mode-univ').className = mode === 'univ' ? "px-5 py-2 rounded-xl text-sm font-black transition bg-theme-600 text-white shadow" : "px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white";
@@ -831,14 +985,30 @@
             for (let i = 0; i < firstDay; i++) grid.innerHTML += `<div class="bg-slate-900/10 rounded-xl h-28"></div>`;
 
             for (let day = 1; day <= lastDate; day++) {
+                const dateObj = new Date(currentYear, currentMonth, day);
                 const dateStr = `${currentYear}-${String(currentMonth + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
                 const isToday = (dateStr === todayStr);
-                const dayEvents = events.filter(e => e.date === dateStr && e.type === calMode);
-                let evHtml = '';
+                const dayOfWeek = dateObj.getDay();
+
+                let univEventsHtml = '';
+                if (calMode === 'univ' && dayOfWeek >= 1 && dayOfWeek <= 5) {
+                    const m = currentMonth + 1;
+                    const semKey = (m >= 4 && m <= 9) ? 'zenki' : 'kouki';
+                    const dayIdx = dayOfWeek - 1;
+                    const timetable = univTimetable[semKey];
+                    for (let p = 1; p <= 5; p++) {
+                        const cName = timetable[p][dayIdx];
+                        if (cName) {
+                            univEventsHtml += `<div class="text-[10px] px-1.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 font-bold mb-0.5 truncate">${p}限: ${cName}</div>`;
+                        }
+                    }
+                }
+
+                const dayEvents = events.filter(e => e.date === dateStr && (calMode === 'general' || e.type === 'general'));
+                let evHtml = univEventsHtml;
                 dayEvents.forEach(ev => {
-                    const color = ev.type === 'univ' ? 'bg-amber-500/20 text-amber-300' : 'bg-theme-500/20 text-theme-300';
                     evHtml += `
-                        <div class="text-xs px-1.5 py-1 rounded-lg flex justify-between items-center mb-1 ${color} font-bold shadow-sm">
+                        <div class="text-xs px-1.5 py-1 rounded-lg flex justify-between items-center mb-1 bg-theme-500/20 text-theme-300 font-bold shadow-sm">
                             <span class="truncate">${ev.title}</span>
                             <button onclick="deleteEvent(${ev.id})" class="text-slate-400 hover:text-rose-400 font-black ml-1">✕</button>
                         </div>
@@ -884,7 +1054,7 @@
                 const y = currDate.getFullYear();
                 const m = String(currDate.getMonth() + 1).padStart(2, '0');
                 const d = String(currDate.getDate()).padStart(2, '0');
-                events.push({ id: Date.now() + i, type: calMode, title, date: `${y}-${m}-${d}` });
+                events.push({ id: Date.now() + i, type: 'general', title, date: `${y}-${m}-${d}` });
                 currDate.setDate(currDate.getDate() + intervalDays);
             }
             saveData();
@@ -897,14 +1067,24 @@
             saveData();
         }
 
+        // ================= タスク管理（カテゴリ別・KANRI KING称号） =================
+        function setTaskCategory(cat) {
+            currentTaskCategory = cat;
+            document.getElementById('tcat-video').className = cat === '動画編集' ? "py-2 rounded-xl text-xs font-black transition bg-amber-600 text-slate-950 shadow" : "py-2 rounded-xl text-xs font-black transition bg-slate-800 text-slate-300";
+            document.getElementById('tcat-illust').className = cat === 'イラスト制作' ? "py-2 rounded-xl text-xs font-black transition bg-amber-600 text-slate-950 shadow" : "py-2 rounded-xl text-xs font-black transition bg-slate-800 text-slate-300";
+            document.getElementById('tcat-other').className = cat === 'その他' ? "py-2 rounded-xl text-xs font-black transition bg-amber-600 text-slate-950 shadow" : "py-2 rounded-xl text-xs font-black transition bg-slate-800 text-slate-300";
+        }
+
         function renderTasks() {
             const tbody = document.getElementById('task-table-body');
             tbody.innerHTML = '';
             
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            const filterCat = document.getElementById('task-filter-cat')?.value || 'all';
 
             const visibleTasks = tasks.filter(t => {
+                if (filterCat !== 'all' && t.category !== filterCat) return false;
                 if (t.status !== '完了') return true;
                 const taskYm = t.duedate ? t.duedate.substring(0, 7) : '';
                 return taskYm === currentYm;
@@ -925,17 +1105,20 @@
 
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700/40 transition">
-                        <td class="py-4 px-4 font-bold text-white text-base">${task.title}</td>
+                        <td class="py-4 px-4">
+                            <span class="text-[10px] bg-slate-700 text-amber-300 px-2 py-0.5 rounded font-bold uppercase">${task.category || '動画編集'}</span>
+                            <div class="font-bold text-white text-base mt-1">${task.title}</div>
+                        </td>
                         <td class="py-4 px-4 text-slate-300 text-sm">${task.duedate}</td>
                         <td class="py-4 px-4 text-emerald-400 font-black text-base">¥${task.reward.toLocaleString()}</td>
                         <td class="py-4 px-4 text-slate-300 text-sm">${hours} h</td>
                         <td class="py-4 px-4">
-                            <div class="font-bold text-theme-500 text-base">¥${wage.toLocaleString()} /h</div>
+                            <div class="font-bold text-amber-400 text-base">¥${wage.toLocaleString()} /h</div>
                             <span class="inline-block px-2.5 py-0.5 rounded-lg text-xs font-black mt-1 ${rank.color}">${rank.name}</span>
                         </td>
                         <td class="py-4 px-4"><span class="text-xs px-3 py-1 rounded-full font-bold ${badge}">${task.status}</span></td>
                         <td class="py-4 px-4 text-right space-x-2">
-                            <button onclick="selectTaskForTimer(${task.id})" class="bg-theme-600 hover:bg-theme-500 text-white px-3 py-1.5 rounded-xl text-xs font-bold shadow">計測</button>
+                            <button onclick="selectTaskForTimer(${task.id})" class="bg-amber-600 hover:bg-amber-500 text-slate-950 px-3 py-1.5 rounded-xl text-xs font-bold shadow">計測</button>
                             <button onclick="openEditTaskModal(${task.id})" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold">編集</button>
                             <button onclick="deleteTask(${task.id})" class="text-slate-400 hover:text-rose-400 font-black text-base ml-1">✕</button>
                         </td>
@@ -944,19 +1127,14 @@
             });
         }
 
+        // タスク月別アーカイブ
         function renderTaskArchives() {
             const container = document.getElementById('task-archive-container');
             container.innerHTML = '';
-
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-            const pastCompletedTasks = tasks.filter(t => {
-                if (t.status !== '完了' || !t.duedate) return false;
-                const taskYm = t.duedate.substring(0, 7);
-                return taskYm < currentYm;
-            });
-
+            const pastCompletedTasks = tasks.filter(t => t.status === '完了' && t.duedate && t.duedate.substring(0, 7) < currentYm);
             if (pastCompletedTasks.length === 0) {
                 container.innerHTML = `<div class="text-sm text-slate-500">過ぎた月のアーカイブ案件はありません。</div>`;
                 return;
@@ -981,7 +1159,7 @@
                         <div class="bg-slate-900/60 p-3 rounded-xl border border-slate-700/60 flex justify-between items-center text-sm">
                             <div>
                                 <span class="font-bold text-white">${t.title}</span>
-                                <span class="text-xs text-slate-400 ml-2">(${hours}h / 実質時給 ¥${wage.toLocaleString()})</span>
+                                <span class="text-xs text-slate-400 ml-2">(${hours}h / 時給 ¥${wage.toLocaleString()})</span>
                             </div>
                             <div class="flex items-center space-x-3">
                                 <span class="px-2 py-0.5 rounded text-xs font-bold ${rank.color}">${rank.name}</span>
@@ -991,11 +1169,10 @@
                         </div>
                     `;
                 });
-
                 container.innerHTML += `
                     <div class="bg-slate-900/40 border border-slate-700/80 rounded-2xl p-4 space-y-2">
                         <div class="flex justify-between items-center border-b border-slate-700/60 pb-2">
-                            <h3 class="font-black text-theme-500 text-base">📅 ${ym} アーカイブ</h3>
+                            <h3 class="font-black text-amber-400 text-base">📅 ${ym} 案件アーカイブ</h3>
                             <span class="text-sm font-bold text-emerald-400">合計: ¥${ymTotal.toLocaleString()}</span>
                         </div>
                         <div class="space-y-2">${listHtml}</div>
@@ -1059,11 +1236,20 @@
             document.getElementById('timer-display').textContent = `${h}:${m}:${s}`;
         }
 
-        function openTaskModal() { document.getElementById('task-edit-id').value = ''; document.getElementById('task-modal').classList.remove('hidden'); }
+        function openTaskModal() {
+            document.getElementById('task-edit-id').value = '';
+            document.getElementById('task-title').value = '';
+            document.getElementById('task-reward').value = '';
+            document.getElementById('task-manual-hours').value = '';
+            setTaskCategory('動画編集');
+            document.getElementById('task-modal').classList.remove('hidden');
+        }
+
         function openEditTaskModal(id) {
             const task = tasks.find(t => t.id === id);
             if (!task) return;
             document.getElementById('task-edit-id').value = task.id;
+            setTaskCategory(task.category || '動画編集');
             document.getElementById('task-title').value = task.title;
             document.getElementById('task-reward').value = task.reward;
             document.getElementById('task-duedate').value = task.duedate;
@@ -1082,12 +1268,13 @@
             const rawManualHours = Number(document.getElementById('task-manual-hours').value) || 0;
             const parsedHours = parseFormattedTime(rawManualHours);
             const status = document.getElementById('task-status-select').value;
+            const category = currentTaskCategory;
 
             if (editId) {
                 const task = tasks.find(t => t.id == editId);
-                if (task) { task.title = title; task.reward = reward; task.duedate = duedate; task.seconds = parsedHours * 3600; task.status = status; }
+                if (task) { task.title = title; task.reward = reward; task.duedate = duedate; task.seconds = parsedHours * 3600; task.status = status; task.category = category; }
             } else {
-                tasks.push({ id: Date.now(), title, reward, duedate, seconds: parsedHours * 3600, status });
+                tasks.push({ id: Date.now(), title, reward, duedate, seconds: parsedHours * 3600, status, category });
             }
             saveData();
             closeTaskModal();
@@ -1097,6 +1284,7 @@
             if (confirm('この案件を削除しますか？')) { tasks = tasks.filter(t => t.id !== id); saveData(); }
         }
 
+        // ================= バイト管理（編集可能 ＆ 月別アーカイブ） =================
         function renderPartTimes() {
             const tbody = document.getElementById('pt-table-body');
             tbody.innerHTML = '';
@@ -1105,7 +1293,13 @@
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
 
-            partTimes.forEach(p => {
+            const currentMonthPts = partTimes.filter(p => p.date && p.date.startsWith(currentYm));
+
+            if (currentMonthPts.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="py-6 text-center text-slate-500 font-bold">今月のバイト記録はありません。</td></tr>`;
+            }
+
+            currentMonthPts.forEach(p => {
                 const totalHours = parseFormattedTime(p.hoursRaw);
                 const midHours = parseFormattedTime(p.midnightHrs);
                 const overHours = parseFormattedTime(p.overtimeHrs);
@@ -1115,10 +1309,9 @@
                 const overPay = overHours * (p.baseWage || 0) * 0.25;
                 const subTotal = Math.round(basePay + midPay + overPay + (p.transport || 0));
 
-                if (p.date.startsWith(currentYm)) {
-                    totalInc += subTotal;
-                    totalHrs += totalHours;
-                }
+                totalInc += subTotal;
+                totalHrs += totalHours;
+
                 tbody.innerHTML += `
                     <tr class="hover:bg-slate-700/45 transition">
                         <td class="py-4 px-4 text-slate-300 text-sm font-bold">${p.date}</td>
@@ -1128,7 +1321,10 @@
                             基本(¥${(p.baseWage||0)}/h) + 深夜(${p.midnightHrs||0}h) + 残業(${p.overtimeHrs||0}h) + 電車賃(¥${p.transport||0})
                         </td>
                         <td class="py-4 px-4 text-emerald-400 font-black text-lg">¥${subTotal.toLocaleString()}</td>
-                        <td class="py-4 px-4 text-right"><button onclick="deletePt(${p.id})" class="text-slate-400 hover:text-rose-400 font-black text-base">✕ 削除</button></td>
+                        <td class="py-4 px-4 text-right space-x-2">
+                            <button onclick="openEditPtModal(${p.id})" class="bg-slate-700 hover:bg-slate-600 text-slate-300 px-3 py-1.5 rounded-xl text-xs font-bold">編集</button>
+                            <button onclick="deletePt(${p.id})" class="text-slate-400 hover:text-rose-400 font-black text-base">✕</button>
+                        </td>
                     </tr>
                 `;
             });
@@ -1136,35 +1332,120 @@
             document.getElementById('pt-total-hours').textContent = `${totalHrs.toFixed(1)} h`;
         }
 
-        function openPtModal() { document.getElementById('pt-modal').classList.remove('hidden'); }
+        // バイトアーカイブ (過ぎた月)
+        function renderPartTimeArchives() {
+            const container = document.getElementById('pt-archive-container');
+            if (!container) return;
+            container.innerHTML = '';
+            const now = new Date();
+            const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+
+            const pastPts = partTimes.filter(p => p.date && p.date.substring(0, 7) < currentYm);
+            if (pastPts.length === 0) {
+                container.innerHTML = `<div class="text-sm text-slate-500">過去月のバイトアーカイブはありません。</div>`;
+                return;
+            }
+
+            const groups = {};
+            pastPts.forEach(p => {
+                const ym = p.date.substring(0, 7);
+                if (!groups[ym]) groups[ym] = [];
+                groups[ym].push(p);
+            });
+
+            Object.keys(groups).sort().reverse().forEach(ym => {
+                let ymTotal = 0;
+                let listHtml = '';
+                groups[ym].forEach(p => {
+                    const totalHours = parseFormattedTime(p.hoursRaw);
+                    const subTotal = Math.round((totalHours * (p.baseWage || 0)) + (p.transport || 0));
+                    ymTotal += subTotal;
+                    listHtml += `
+                        <div class="flex justify-between items-center text-xs bg-slate-900/60 p-2.5 rounded-lg border border-slate-700">
+                            <div><strong class="text-white">${p.name}</strong> (${p.date})</div>
+                            <div class="flex items-center space-x-2">
+                                <span class="text-emerald-400 font-bold">¥${subTotal.toLocaleString()}</span>
+                                <button onclick="openEditPtModal(${p.id})" class="bg-slate-700 text-slate-300 px-2 py-1 rounded">編集</button>
+                            </div>
+                        </div>
+                    `;
+                });
+                container.innerHTML += `
+                    <div class="bg-slate-900/40 p-3 rounded-xl border border-slate-700 space-y-2">
+                        <div class="flex justify-between items-center font-bold text-amber-400 text-sm border-b border-slate-700 pb-1">
+                            <span>📅 ${ym} バイト</span>
+                            <span>合計: ¥${ymTotal.toLocaleString()}</span>
+                        </div>
+                        <div class="space-y-1">${listHtml}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function openPtModal() {
+            document.getElementById('pt-edit-id').value = '';
+            document.getElementById('modal-pt-title').textContent = 'バイト勤務・給与詳細登録';
+            document.getElementById('pt-name').value = '';
+            document.getElementById('pt-hours').value = '';
+            document.getElementById('pt-base-wage').value = '';
+            document.getElementById('pt-midnight-hours').value = '0';
+            document.getElementById('pt-overtime-hours').value = '0';
+            document.getElementById('pt-transport').value = '0';
+            document.getElementById('pt-modal').classList.remove('hidden');
+        }
+
+        function openEditPtModal(id) {
+            const p = partTimes.find(item => item.id === id);
+            if (!p) return;
+            document.getElementById('pt-edit-id').value = p.id;
+            document.getElementById('modal-pt-title').textContent = 'バイト勤務・給与編集';
+            document.getElementById('pt-name').value = p.name;
+            document.getElementById('pt-date').value = p.date;
+            document.getElementById('pt-hours').value = p.hoursRaw;
+            document.getElementById('pt-base-wage').value = p.baseWage;
+            document.getElementById('pt-midnight-hours').value = p.midnightHrs;
+            document.getElementById('pt-overtime-hours').value = p.overtimeHrs;
+            document.getElementById('pt-transport').value = p.transport;
+            document.getElementById('pt-payday').value = p.payday;
+            document.getElementById('pt-modal').classList.remove('hidden');
+        }
+
         function closePtModal() { document.getElementById('pt-modal').classList.add('hidden'); }
+
         function savePt(e) {
             e.preventDefault();
-            partTimes.push({
-                id: Date.now(),
-                name: document.getElementById('pt-name').value,
-                date: document.getElementById('pt-date').value,
-                hoursRaw: Number(document.getElementById('pt-hours').value),
-                baseWage: Number(document.getElementById('pt-base-wage').value),
-                midnightHrs: Number(document.getElementById('pt-midnight-hours').value) || 0,
-                overtimeHrs: Number(document.getElementById('pt-overtime-hours').value) || 0,
-                transport: Number(document.getElementById('pt-transport').value) || 0,
-                payday: document.getElementById('pt-payday').value
-            });
+            const editId = document.getElementById('pt-edit-id').value;
+            const name = document.getElementById('pt-name').value;
+            const date = document.getElementById('pt-date').value;
+            const hoursRaw = Number(document.getElementById('pt-hours').value);
+            const baseWage = Number(document.getElementById('pt-base-wage').value);
+            const midnightHrs = Number(document.getElementById('pt-midnight-hours').value) || 0;
+            const overtimeHrs = Number(document.getElementById('pt-overtime-hours').value) || 0;
+            const transport = Number(document.getElementById('pt-transport').value) || 0;
+            const payday = document.getElementById('pt-payday').value;
+
+            if (editId) {
+                const p = partTimes.find(item => item.id == editId);
+                if (p) {
+                    p.name = name; p.date = date; p.hoursRaw = hoursRaw; p.baseWage = baseWage;
+                    p.midnightHrs = midnightHrs; p.overtimeHrs = overtimeHrs; p.transport = transport; p.payday = payday;
+                }
+            } else {
+                partTimes.push({ id: Date.now(), name, date, hoursRaw, baseWage, midnightHrs, overtimeHrs, transport, payday });
+            }
             saveData();
             closePtModal();
         }
+
         function deletePt(id) {
             if (confirm('このバイト記録を削除しますか？')) { partTimes = partTimes.filter(p => p.id !== id); saveData(); }
         }
 
+        // ================= グラフ描画 =================
         function renderCharts() {
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            const activeTasks = tasks.filter(t => {
-                if (t.status !== '完了') return true;
-                return (t.duedate && t.duedate.substring(0, 7) === currentYm);
-            });
+            const activeTasks = tasks.filter(t => t.status !== '完了' || (t.duedate && t.duedate.substring(0, 7) === currentYm));
             const labels = activeTasks.map(t => t.title.length > 8 ? t.title.substring(0, 8) + '...' : t.title);
             const wages = activeTasks.map(t => t.seconds > 0 ? Math.round(t.reward / (t.seconds / 3600)) : 0);
             const hours = activeTasks.map(t => (t.seconds / 3600).toFixed(1));
@@ -1173,7 +1454,7 @@
             if (wageChartInstance) wageChartInstance.destroy();
             wageChartInstance = new Chart(ctxWage, {
                 type: 'bar',
-                data: { labels: labels, datasets: [{ data: wages, backgroundColor: savedTheme === 'purple' ? '#a855f7' : savedTheme === 'emerald' ? '#10b981' : savedTheme === 'blue' ? '#3b82f6' : '#6366f1', borderRadius: 6 }] },
+                data: { labels: labels, datasets: [{ data: wages, backgroundColor: '#f59e0b', borderRadius: 6 }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } }, scales: { y: { ticks: { color: '#94a3b8', font: { size: 11, weight: 'bold' } }, grid: { color: '#334155' } }, x: { ticks: { color: '#94a3b8', font: { size: 11, weight: 'bold' } }, grid: { display: false } } } }
             });
 
@@ -1181,7 +1462,7 @@
             if (timeChartInstance) timeChartInstance.destroy();
             timeChartInstance = new Chart(ctxTime, {
                 type: 'doughnut',
-                data: { labels: labels, datasets: [{ data: hours, backgroundColor: ['#6366f1', '#ec4899', '#f59e0b', '#10b981', '#3b82f6'] }] },
+                data: { labels: labels, datasets: [{ data: hours, backgroundColor: ['#f59e0b', '#ec4899', '#6366f1', '#10b981', '#3b82f6'] }] },
                 options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'right', labels: { color: '#94a3b8', boxWidth: 12, font: { size: 11, weight: 'bold' } } } } }
             });
         }
