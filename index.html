@@ -7,8 +7,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@800&display=swap">
-    <!-- YouTube IFrame Player API -->
-    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         const savedTheme = localStorage.getItem('kk_theme') || 'slate';
         tailwind.config = {
@@ -103,7 +101,7 @@
                     </div>
                 </div>
 
-                <!-- YouTube 音楽プレイヤーウィジェット -->
+                <!-- YouTube 音楽プレイヤーウィジェット（安定版iframe方式） -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-sm font-black text-slate-300 flex items-center gap-2">🎵 YouTube BGM プレイヤー</h2>
@@ -112,31 +110,28 @@
 
                     <div class="flex flex-wrap gap-2 pt-1">
                         <button onclick="playPresetYouTube('87-HVZhamfg', '【INMU KING】')" class="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow">🔥 【INMU KING】</button>
-                        <button onclick="playPresetYouTube('m4jwC3n8UPM', '【あいうおすちつ】')" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow">✨ 【あいうおすちつ】</button>
+                        <button onclick="playPresetYouTube('https://youtu.be/m4jwC3n8UPM?si=gwVJuQNVEtbTmEi6', '【あいうおすちつ】')" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow">✨ 【あいうおすちつ】</button>
                     </div>
 
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="youtube-url-input" placeholder="その他のYouTube URLまたは動画ID" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:outline-none">
+                        <input type="text" id="youtube-url-input" placeholder="YouTubeのURL（例: https://www.youtube.com/watch?v=...）" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:outline-none">
                         <button onclick="playCustomYouTube()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow">再生</button>
                     </div>
 
                     <div class="flex flex-wrap items-center justify-between bg-slate-900/80 p-4 rounded-xl border border-slate-700 gap-4">
                         <div class="text-xs font-bold text-amber-300 truncate max-w-[200px]" id="yt-current-title">楽曲未選択</div>
                         <div class="flex items-center space-x-2">
-                            <button onclick="pauseYouTube()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">一時停止</button>
-                            <button onclick="resumeYouTube()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">再開</button>
-                            <button onclick="stopYouTube()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">停止</button>
-                        </div>
-                        <div class="flex items-center space-x-2">
-                            <span class="text-xs text-slate-400 font-bold">音量</span>
-                            <input type="range" id="yt-volume-slider" min="0" max="100" value="50" oninput="changeYouTubeVolume(this.value)" class="w-24 accent-amber-500">
+                            <button onclick="stopYouTube()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">停止 / 閉じる</button>
                         </div>
                     </div>
 
-                    <div id="hidden-youtube-player" style="width: 1px; height: 1px; opacity: 0; position: absolute; pointer-events: none; overflow: hidden;"></div>
+                    <!-- 安定動作するiframe埋め込みプレイヤーコンテナ -->
+                    <div id="youtube-embed-container" class="hidden rounded-xl overflow-hidden border border-slate-700 bg-black mt-2" style="width: 100%; height: 120px;">
+                        <iframe id="youtube-iframe" src="" width="100%" height="100%" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+                    </div>
                 </div>
 
-                <!-- 収支ボード ＆ 出発リミットウィジェット（本件＋翌日自動反映） -->
+                <!-- 収支ボード ＆ 出発リミットウィジェット -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
                         <div class="flex justify-between items-center">
@@ -170,7 +165,7 @@
                         </div>
                     </div>
 
-                    <!-- 出発リミット（本日 ＆ 翌日） -->
+                    <!-- 出発リミット -->
                     <div class="bg-slate-800 border-2 border-amber-500/40 p-6 rounded-2xl shadow-xl md:col-span-2 flex flex-col justify-between bg-gradient-to-br from-slate-800 via-slate-800 to-amber-950/30 space-y-4">
                         <div>
                             <div class="flex justify-between items-center mb-1">
@@ -188,7 +183,7 @@
                             </div>
                         </div>
 
-                        <!-- 明日の出発リミット（自動反映） -->
+                        <!-- 明日の出発リミット -->
                         <div class="border-t border-slate-700 pt-3">
                             <div class="flex justify-between items-center mb-1">
                                 <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">🏃‍♂️ 明日の出発リミット（自動反映）</span>
@@ -228,7 +223,7 @@
                 </div>
             </div>
 
-            <!-- ================= 2. カレンダー画面 (3モード切替) ================= -->
+            <!-- ================= 2. カレンダー画面 ================= -->
             <div id="tab-calendar" class="space-y-6 hidden">
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl">
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
@@ -252,7 +247,7 @@
                 </div>
             </div>
 
-            <!-- ================= 3. 大学時間割画面 (欠席回数カウンター付き) ================= -->
+            <!-- ================= 3. 大学時間割画面 ================= -->
             <div id="tab-univ" class="space-y-6 hidden">
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-700 pb-4">
@@ -377,7 +372,7 @@
                     </div>
                 </div>
 
-                <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-4">
+                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <h2 class="text-lg font-black text-slate-200">💼 今月のバイト勤務履歴 & 振込日一覧</h2>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
@@ -684,119 +679,64 @@
         let timeChartInstance = null;
         let currentYear = new Date().getFullYear();
         let currentMonth = new Date().getMonth();
-        let calMode = 'univ'; // 'univ' | 'general' | 'both'
+        let calMode = 'univ';
         let currentUnivSemester = 'zenki';
         let currentTaskCategory = '動画編集';
 
-        // YouTube API 関連
-        let ytPlayer = null;
-        let ytApiReady = false;
-
-        function onYouTubeIframeAPIReady() {
-            ytApiReady = true;
-        }
-
+        // 安定版 YouTube プレイヤー制御
         function extractYouTubeId(urlOrId) {
             if (!urlOrId) return '';
-            let videoId = urlOrId.trim();
-            if (videoId.includes('youtu.be/')) {
-                videoId = videoId.split('youtu.be/')[1].split('?')[0];
-            } else if (videoId.includes('youtube.com/watch?v=')) {
-                const urlParams = new URLSearchParams(new URL(videoId).search);
-                videoId = urlParams.get('v');
-            } else if (videoId.includes('youtube.com/embed/')) {
-                videoId = videoId.split('youtube.com/embed/')[1].split('?')[0];
-            }
-            return videoId;
-        }
-
-        function loadAndPlayYouTube(videoId, title) {
-            document.getElementById('yt-current-title').textContent = title || videoId;
-            document.getElementById('yt-status-badge').textContent = '再生中';
-            document.getElementById('yt-status-badge').className = 'text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold animate-pulse';
-
-            if (!ytApiReady) {
-                setTimeout(() => loadAndPlayYouTube(videoId, title), 500);
-                return;
-            }
-
-            const vol = document.getElementById('yt-volume-slider').value;
-
-            if (!ytPlayer) {
-                ytPlayer = new YT.Player('hidden-youtube-player', {
-                    height: '1',
-                    width: '1',
-                    videoId: videoId,
-                    playerVars: {
-                        'autoplay': 1,
-                        'controls': 0,
-                        'enablejsapi': 1,
-                        'loop': 1,
-                        'playlist': videoId
-                    },
-                    events: {
-                        'onReady': (event) => {
-                            event.target.setVolume(vol);
-                            event.target.playVideo();
-                        },
-                        'onError': (event) => {
-                            console.error('YT Error:', event.data);
-                            alert('YouTubeの再生に失敗しました（埋め込み制限等の可能性があります）。');
-                        }
-                    }
-                });
-            } else {
-                if (typeof ytPlayer.loadVideoById === 'function') {
-                    ytPlayer.loadVideoById(videoId);
-                    ytPlayer.setVolume(vol);
-                    ytPlayer.playVideo();
+            let val = urlOrId.trim();
+            if (val.includes('youtu.be/')) {
+                return val.split('youtu.be/')[1].split('?')[0];
+            } else if (val.includes('youtube.com/watch?v=')) {
+                try {
+                    const urlObj = new URL(val);
+                    return urlObj.searchParams.get('v') || '';
+                } catch(e) {
+                    const parts = val.split('v=');
+                    if (parts.length > 1) return parts[1].split('&')[0];
                 }
+            } else if (val.includes('youtube.com/embed/')) {
+                return val.split('youtube.com/embed/')[1].split('?')[0];
             }
+            return val; // ID単体の場合
         }
 
-        function playPresetYouTube(videoId, title) {
-            loadAndPlayYouTube(videoId, title);
-        }
-
-        function playCustomYouTube() {
-            const input = document.getElementById('youtube-url-input').value;
-            const videoId = extractYouTubeId(input);
+        function loadAndPlayYouTube(urlOrId, title) {
+            const videoId = extractYouTubeId(urlOrId);
             if (!videoId) {
                 alert('有効なYouTubeのURLまたは動画IDを入力してください');
                 return;
             }
-            loadAndPlayYouTube(videoId, input);
+
+            document.getElementById('yt-current-title').textContent = title || urlOrId;
+            document.getElementById('yt-status-badge').textContent = '再生中';
+            document.getElementById('yt-status-badge').className = 'text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold animate-pulse';
+
+            const container = document.getElementById('youtube-embed-container');
+            const iframe = document.getElementById('youtube-iframe');
+            
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&enablejsapi=1`;
+            container.classList.remove('hidden');
         }
 
-        function pauseYouTube() {
-            if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
-                ytPlayer.pauseVideo();
-                document.getElementById('yt-status-badge').textContent = '一時停止';
-                document.getElementById('yt-status-badge').className = 'text-xs bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full font-bold';
-            }
+        function playPresetYouTube(urlOrId, title) {
+            loadAndPlayYouTube(urlOrId, title);
         }
 
-        function resumeYouTube() {
-            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
-                ytPlayer.playVideo();
-                document.getElementById('yt-status-badge').textContent = '再生中';
-                document.getElementById('yt-status-badge').className = 'text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold animate-pulse';
-            }
+        function playCustomYouTube() {
+            const input = document.getElementById('youtube-url-input').value;
+            loadAndPlayYouTube(input, input);
         }
 
         function stopYouTube() {
-            if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
-                ytPlayer.stopVideo();
-                document.getElementById('yt-current-title').textContent = '楽曲未選択';
-                document.getElementById('yt-status-badge').textContent = '停止中';
-                document.getElementById('yt-status-badge').className = 'text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full font-bold';
-            }
-        }
-
-        function changeYouTubeVolume(val) {
-            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
-                ytPlayer.setVolume(val);
-            }
+            const iframe = document.getElementById('youtube-iframe');
+            iframe.src = '';
+            document.getElementById('youtube-embed-container').classList.add('hidden');
+            document.getElementById('yt-current-title').textContent = '楽曲未選択';
+            document.getElementById('yt-status-badge').textContent = '停止中';
+            document.getElementById('yt-status-badge').className = 'text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full font-bold';
         }
 
         function playYarimasuneSound() {
@@ -1118,7 +1058,6 @@
             migrateUnivTimetable();
             const now = new Date();
 
-            // 本日情報の計算
             const semKeyToday = getActiveSemesterKey(now);
             const dayOfWeekToday = now.getDay();
             const todayDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
@@ -1156,7 +1095,6 @@
                 classEl.textContent = todayEvents.length > 0 ? todayEvents[0].title : "本日の講義・予定なし";
             }
 
-            // 明日情報の計算 (自動反映)
             const tomorrow = new Date(now);
             tomorrow.setDate(now.getDate() + 1);
             const semKeyTom = getActiveSemesterKey(tomorrow);
