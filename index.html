@@ -84,20 +84,35 @@
 
             <!-- ================= 1. ホーム画面 ================= -->
             <div id="tab-home" class="space-y-8">
-                <!-- 装飾フレーズ ＆ 世界時計 -->
-                <div class="flex flex-col md:flex-row justify-between items-center py-4 px-6 bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 border-y-2 border-amber-500/50 rounded-2xl shadow-[0_0_20px_rgba(245,158,11,0.15)] gap-4">
-                    <h2 class="font-king text-xl md:text-3xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-amber-200 via-amber-400 to-amber-500 drop-shadow-md">
-                        「天は鳴き、大地は震える。」
-                    </h2>
-                    <div class="bg-slate-950/90 px-5 py-2.5 rounded-xl border border-amber-500/30 text-right shadow-inner">
-                        <div class="text-[10px] text-amber-400/80 font-bold uppercase tracking-wider">世界時計 (日本 / JST)</div>
-                        <div id="world-clock-jst" class="text-lg font-mono font-black text-amber-300">--:--:--</div>
+                <!-- 本日の格言（美しく豪華なグラデーション復活） ＆ 世界時計 -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
+                    <div class="lg:col-span-2 text-center py-8 px-6 bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-900 border-2 border-indigo-500/50 rounded-3xl shadow-[0_0_35px_rgba(99,102,241,0.25)] space-y-2">
+                        <div class="text-xs font-bold text-indigo-400 uppercase tracking-widest">👑 本日の格言</div>
+                        <h2 class="font-king text-2xl md:text-4xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-indigo-300 to-purple-400 drop-shadow-lg">
+                            「天は鳴き、大地は震える。」
+                        </h2>
                     </div>
+                    <div class="bg-slate-950/90 p-5 rounded-2xl border border-amber-500/30 text-right shadow-inner">
+                        <div class="text-[10px] text-amber-400/80 font-bold uppercase tracking-wider">世界時計 (日本 / JST)</div>
+                        <div id="world-clock-jst" class="text-xl font-mono font-black text-amber-300 mt-1">--:--:--</div>
+                    </div>
+                </div>
+
+                <!-- YouTube BGM プレイヤーウィジェット (新実装) -->
+                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-sm font-black text-slate-300 flex items-center gap-2">🎵 YouTube BGM プレイヤー</h2>
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <input type="text" id="youtube-url-input" placeholder="YouTubeのURLまたは動画ID (例: dQw4w9WgXcQ)" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:outline-none">
+                        <div class="flex gap-2">
+                            <button onclick="playYouTubeBGM()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow">再生開始</button>
+                            <button onclick="stopYouTubeBGM()" class="bg-rose-600 hover:bg-rose-500 text-white font-black px-5 py-2.5 rounded-xl text-xs transition shadow">停止</button>
+                        </div>
+                    </div>
+                    <div id="youtube-player-container" class="hidden rounded-xl overflow-hidden border border-slate-700"></div>
                 </div>
 
                 <!-- 収支ボード ＆ 家を出るべき時間ウィジェット -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                    <!-- 収入詳細ボード -->
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
                         <div class="flex justify-between items-center">
                             <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">今月の収入内訳</span>
@@ -130,7 +145,6 @@
                         </div>
                     </div>
 
-                    <!-- 家を出るべき時間ウィジェット (新機能) -->
                     <div class="bg-slate-800 border-2 border-amber-500/40 p-6 rounded-2xl shadow-xl md:col-span-2 flex flex-col justify-between bg-gradient-to-br from-slate-800 via-slate-800 to-amber-950/30">
                         <div class="flex justify-between items-center mb-2">
                             <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
@@ -140,7 +154,7 @@
                         </div>
                         <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-900/80 p-4 rounded-xl border border-amber-500/30 shadow-inner gap-4">
                             <div>
-                                <div class="text-xs text-slate-400 font-bold">本日の最早授業から算出（1時間前）</div>
+                                <div class="text-xs text-slate-400 font-bold">最早授業の1時間前</div>
                                 <div class="text-3xl md:text-4xl font-mono font-black text-amber-300 mt-1" id="home-departure-time">--:-- までに出発</div>
                             </div>
                             <div class="text-right sm:max-w-[200px]">
@@ -195,7 +209,7 @@
                 </div>
             </div>
 
-            <!-- ================= 3. 大学時間割画面 (新機能) ================= -->
+            <!-- ================= 3. 大学時間割画面 ================= -->
             <div id="tab-univ" class="space-y-6 hidden">
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-700 pb-4">
@@ -209,7 +223,6 @@
                         </div>
                     </div>
 
-                    <!-- 時間割テーブル -->
                     <div class="overflow-x-auto">
                         <table class="w-full text-center border-collapse text-sm">
                             <thead>
@@ -272,7 +285,6 @@
                     <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
                         <h2 class="text-lg font-black text-slate-200">📋 今月の作業案件一覧</h2>
                         <div class="flex items-center space-x-3">
-                            <!-- カテゴリフィルター -->
                             <select id="task-filter-cat" onchange="renderTasks()" class="bg-slate-900 text-slate-300 font-bold px-3 py-2 rounded-xl border border-slate-700 text-xs">
                                 <option value="all">全カテゴリ</option>
                                 <option value="動画編集">動画編集</option>
@@ -342,9 +354,8 @@
                 </div>
             </div>
 
-            <!-- ================= 6. その他編集（設定・アーカイブ）画面 ================= -->
+            <!-- ================= 6. その他編集画面 ================= -->
             <div id="tab-settings" class="space-y-6 hidden">
-                <!-- 端末間データ共有 -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
                         🔄 端末間データ共有 (PC ⇄ スマホ)
@@ -378,14 +389,12 @@
                         </div>
                     </div>
 
-                    <!-- バイトアーカイブ (新機能) -->
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                         <h2 class="text-lg font-black text-slate-200 border-b border-slate-700 pb-3">💼 過去月バイトアーカイブ</h2>
                         <div id="pt-archive-container" class="space-y-3 max-h-48 overflow-y-auto"></div>
                     </div>
                 </div>
 
-                <!-- 過去月タスクアーカイブ -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center border-b border-slate-700 pb-3">
                         <h2 class="text-lg font-black text-slate-200">📦 過去月タスクアーカイブ（過ぎた月）</h2>
@@ -445,7 +454,7 @@
         </div>
     </div>
 
-    <!-- タスク追加・編集モーダル (カテゴリタブ付き) -->
+    <!-- タスク追加・編集モーダル -->
     <div id="task-modal" class="fixed inset-0 bg-slate-950/80 z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border-2 border-slate-700 rounded-3xl p-6 max-w-md w-full shadow-2xl space-y-4">
             <h3 class="text-xl font-black text-white">フリーランス案件の登録・編集</h3>
@@ -549,28 +558,14 @@
 
     <!-- JavaScript ロジック -->
     <script>
-        // 初期データはすべてまっさら（空）
         let tasks = JSON.parse(localStorage.getItem('kk_tasks')) || [];
         let events = JSON.parse(localStorage.getItem('kk_events')) || [];
         let partTimes = JSON.parse(localStorage.getItem('kk_parttimes')) || [];
         let memos = JSON.parse(localStorage.getItem('kk_memos')) || [];
         
-        // 大学時間割 (前期・後期、月〜金、1〜5限)
         let univTimetable = JSON.parse(localStorage.getItem('kk_univ_timetable')) || {
-            zenki: {
-                1: ["", "", "", "", ""],
-                2: ["", "", "", "", ""],
-                3: ["", "", "", "", ""],
-                4: ["", "", "", "", ""],
-                5: ["", "", "", "", ""]
-            },
-            kouki: {
-                1: ["", "", "", "", ""],
-                2: ["", "", "", "", ""],
-                3: ["", "", "", "", ""],
-                4: ["", "", "", "", ""],
-                5: ["", "", "", "", ""]
-            }
+            zenki: { 1: ["","","","",""], 2: ["","","","",""], 3: ["","","","",""], 4: ["","","","",""], 5: ["","","","",""] },
+            kouki: { 1: ["","","","",""], 2: ["","","","",""], 3: ["","","","",""], 4: ["","","","",""], 5: ["","","","",""] }
         };
 
         const classTimes = {
@@ -614,7 +609,6 @@
                 document.getElementById('main-app').classList.remove('hidden');
                 initApp();
             }
-            // 年のセレクト初期値に現在年を設定
             const yearSel = document.getElementById('home-year-select');
             if (yearSel) yearSel.value = new Date().getFullYear();
 
@@ -626,6 +620,34 @@
             updateDepartureTimeWidget();
             renderUnivTimetableGrid();
         });
+
+        // YouTube BGM 再生関数 (新実装)
+        function playYouTubeBGM() {
+            const input = document.getElementById('youtube-url-input').value.trim();
+            let videoId = input;
+            if (input.includes('youtube.com/watch?v=')) {
+                const urlParams = new URLSearchParams(new URL(input).search);
+                videoId = urlParams.get('v');
+            } else if (input.includes('youtu.be/')) {
+                videoId = input.split('youtu.be/')[1].split('?')[0];
+            }
+            
+            if (!videoId) {
+                alert('有効なYouTubeのURLまたは動画IDを入力してください');
+                return;
+            }
+
+            const container = document.getElementById('youtube-player-container');
+            container.classList.remove('hidden');
+            container.innerHTML = `<iframe width="100%" height="90" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
+        }
+
+        function stopYouTubeBGM() {
+            const container = document.getElementById('youtube-player-container');
+            container.innerHTML = '';
+            container.classList.add('hidden');
+            document.getElementById('youtube-url-input').value = '';
+        }
 
         function updateWorldClock() {
             const now = new Date();
@@ -737,7 +759,6 @@
             if (tabName === 'tasks') renderCharts();
         }
 
-        // ================= KANRI KING 豪華称号・演出 =================
         function getRankInfo(wage) {
             if (wage >= 2500) return { name: '🔥 KANRI KING', color: 'bg-gradient-to-r from-amber-500/30 to-amber-600/30 text-amber-300 border-2 border-amber-400 shadow-[0_0_12px_rgba(251,191,36,0.4)] animate-pulse' };
             if (wage >= 2000) return { name: '✨ やりますねぇ！', color: 'bg-amber-500/20 text-amber-300 border border-amber-500/50' };
@@ -747,7 +768,6 @@
             return { name: '📌 ランク D', color: 'bg-slate-700 text-slate-300' };
         }
 
-        // ================= 大学時間割 & 出発リミット計算 =================
         function setUnivSemester(sem) {
             currentUnivSemester = sem;
             document.getElementById('univ-sem-zenki').className = sem === 'zenki' ? "px-5 py-2 rounded-xl text-sm font-black transition bg-amber-600 text-slate-950 shadow" : "px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white";
@@ -786,14 +806,12 @@
             alert('大学時間割を保存し、カレンダーと同期しました！');
         }
 
-        // 本日の出発時間・最早授業の計算
         function updateDepartureTimeWidget() {
             const now = new Date();
             const m = now.getMonth() + 1;
             const isZenki = (m >= 4 && m <= 9);
             const semKey = isZenki ? 'zenki' : 'kouki';
             
-            // 0:日, 1:月, 2:火, 3:水, 4:木, 5:金, 6:土
             const dayOfWeek = now.getDay();
             const todayDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
             
@@ -810,14 +828,12 @@
                     if (cName) {
                         earliestPeriod = p;
                         className = cName;
-                        break; // 1限から順に見て最初のものを最早とする
+                        break;
                     }
                 }
             }
 
-            // 一般予定や大学単発イベントもチェック
             const todayEvents = events.filter(e => e.date === todayDateStr);
-            
             const depEl = document.getElementById('home-departure-time');
             const classEl = document.getElementById('home-first-class');
 
@@ -831,7 +847,6 @@
             }
         }
 
-        // ================= KINGメモ =================
         function renderMemos() {
             const container = document.getElementById('home-memo-container');
             container.innerHTML = memos.length === 0 ? '<div class="text-sm text-slate-500 col-span-full">メモはありません。</div>' : '';
@@ -859,14 +874,12 @@
             saveData();
         }
 
-        // ================= ホーム画面・年間収支集計 =================
         function renderHome() {
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
             const selectedYear = document.getElementById('home-year-select')?.value || String(now.getFullYear());
             document.getElementById('display-year-label').textContent = selectedYear;
 
-            // 今月収入計算
             let taskInc = 0;
             tasks.forEach(t => { if (t.status === '完了' && t.duedate && t.duedate.startsWith(currentYm)) taskInc += t.reward; });
 
@@ -887,7 +900,6 @@
             document.getElementById('home-pt-income').textContent = `¥${Math.round(ptInc).toLocaleString()}`;
             document.getElementById('home-total-income').textContent = `¥${Math.round(taskInc + ptInc).toLocaleString()}`;
 
-            // 年間総収入計算
             let yearlyTotal = 0;
             tasks.forEach(t => {
                 if (t.status === '完了' && t.duedate && t.duedate.startsWith(selectedYear)) yearlyTotal += t.reward;
@@ -905,7 +917,6 @@
             });
             document.getElementById('home-yearly-income').textContent = `¥${Math.round(yearlyTotal).toLocaleString()}`;
 
-            // 本日の予定
             const todayStr = now.toISOString().split('T')[0];
             const dayOfWeek = now.getDay();
             const m = now.getMonth() + 1;
@@ -914,7 +925,6 @@
             const evContainer = document.getElementById('home-today-events');
             evContainer.innerHTML = '';
 
-            // 大学時間割の授業を本日の予定として表示
             if (dayOfWeek >= 1 && dayOfWeek <= 5) {
                 const dayIdx = dayOfWeek - 1;
                 const timetable = univTimetable[semKey];
@@ -945,7 +955,6 @@
                 evContainer.innerHTML = '<div class="text-sm text-slate-500">本日の講義・予定はありません。</div>';
             }
 
-            // 1週間以内のタスク
             const nextWeek = new Date();
             nextWeek.setDate(now.getDate() + 7);
             const urgentTasks = tasks.filter(t => t.status !== '完了' && new Date(t.duedate) >= now && new Date(t.duedate) <= nextWeek);
@@ -964,7 +973,6 @@
             });
         }
 
-        // ================= カレンダー管理 =================
         function setCalMode(mode) {
             calMode = mode;
             document.getElementById('cal-mode-univ').className = mode === 'univ' ? "px-5 py-2 rounded-xl text-sm font-black transition bg-theme-600 text-white shadow" : "px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white";
@@ -1067,7 +1075,6 @@
             saveData();
         }
 
-        // ================= タスク管理（カテゴリ別・KANRI KING称号） =================
         function setTaskCategory(cat) {
             currentTaskCategory = cat;
             document.getElementById('tcat-video').className = cat === '動画編集' ? "py-2 rounded-xl text-xs font-black transition bg-amber-600 text-slate-950 shadow" : "py-2 rounded-xl text-xs font-black transition bg-slate-800 text-slate-300";
@@ -1127,7 +1134,6 @@
             });
         }
 
-        // タスク月別アーカイブ
         function renderTaskArchives() {
             const container = document.getElementById('task-archive-container');
             container.innerHTML = '';
@@ -1284,7 +1290,6 @@
             if (confirm('この案件を削除しますか？')) { tasks = tasks.filter(t => t.id !== id); saveData(); }
         }
 
-        // ================= バイト管理（編集可能 ＆ 月別アーカイブ） =================
         function renderPartTimes() {
             const tbody = document.getElementById('pt-table-body');
             tbody.innerHTML = '';
@@ -1332,7 +1337,6 @@
             document.getElementById('pt-total-hours').textContent = `${totalHrs.toFixed(1)} h`;
         }
 
-        // バイトアーカイブ (過ぎた月)
         function renderPartTimeArchives() {
             const container = document.getElementById('pt-archive-container');
             if (!container) return;
@@ -1441,7 +1445,6 @@
             if (confirm('このバイト記録を削除しますか？')) { partTimes = partTimes.filter(p => p.id !== id); saveData(); }
         }
 
-        // ================= グラフ描画 =================
         function renderCharts() {
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
