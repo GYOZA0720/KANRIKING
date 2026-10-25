@@ -30,6 +30,9 @@
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans text-base md:text-lg">
 
+    <!-- 効果音用音声要素 -->
+    <audio id="yarimasune-audio" src="yarimasune.mp3" preload="auto"></audio>
+
     <!-- ログイン画面 -->
     <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
         <div class="bg-slate-900 border-2 border-amber-500/50 rounded-3xl p-8 max-w-lg w-full shadow-[0_0_30px_rgba(245,158,11,0.2)] text-center">
@@ -100,26 +103,23 @@
                     </div>
                 </div>
 
-                <!-- YouTube 音楽プレイヤーウィジェット (映像非表示・再生/停止/音量・指定ボタン追加) -->
+                <!-- YouTube 音楽プレイヤーウィジェット -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-sm font-black text-slate-300 flex items-center gap-2">🎵 YouTube BGM プレイヤー</h2>
                         <span id="yt-status-badge" class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full font-bold">停止中</span>
                     </div>
 
-                    <!-- 指定プリセットボタン -->
                     <div class="flex flex-wrap gap-2 pt-1">
                         <button onclick="playPresetYouTube('87-HVZhamfg', '【INMU KING】')" class="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow">🔥 【INMU KING】</button>
-                        <button onclick="playPresetYouTube('m4jwC3n8UPM', '【あいうえすちつ】')" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow">✨ 【あいうえすちつ】</button>
+                        <button onclick="playPresetYouTube('m4jwC3n8UPM', '【あいうおすちつ】')" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow">✨ 【あいうおすちつ】</button>
                     </div>
 
-                    <!-- 自由入力 ＆ 再生ボタン -->
                     <div class="flex flex-col sm:flex-row gap-3">
                         <input type="text" id="youtube-url-input" placeholder="その他のYouTube URLまたは動画ID" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:outline-none">
                         <button onclick="playCustomYouTube()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow">再生</button>
                     </div>
 
-                    <!-- コントローラー（再生・一時停止・停止・音量） -->
                     <div class="flex flex-wrap items-center justify-between bg-slate-900/80 p-4 rounded-xl border border-slate-700 gap-4">
                         <div class="text-xs font-bold text-amber-300 truncate max-w-[200px]" id="yt-current-title">楽曲未選択</div>
                         <div class="flex items-center space-x-2">
@@ -133,11 +133,10 @@
                         </div>
                     </div>
 
-                    <!-- 映像を一切出さないための隠しプレイヤー要素 -->
                     <div id="hidden-youtube-player" style="width: 1px; height: 1px; opacity: 0; position: absolute; pointer-events: none; overflow: hidden;"></div>
                 </div>
 
-                <!-- 収支ボード ＆ 家を出るべき時間ウィジェット -->
+                <!-- 収支ボード ＆ 出発リミットウィジェット（本件＋翌日自動反映） -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                     <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl flex flex-col justify-between space-y-4">
                         <div class="flex justify-between items-center">
@@ -171,21 +170,38 @@
                         </div>
                     </div>
 
-                    <div class="bg-slate-800 border-2 border-amber-500/40 p-6 rounded-2xl shadow-xl md:col-span-2 flex flex-col justify-between bg-gradient-to-br from-slate-800 via-slate-800 to-amber-950/30">
-                        <div class="flex justify-between items-center mb-2">
-                            <span class="text-xs font-bold text-amber-400 uppercase tracking-wider flex items-center gap-1.5">
-                                <span>🚶‍♂️ 本日の出発リミット</span>
-                            </span>
-                            <span id="home-today-date-label" class="text-xs text-slate-400 font-bold">--月--日</span>
-                        </div>
-                        <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-900/80 p-4 rounded-xl border border-amber-500/30 shadow-inner gap-4">
-                            <div>
-                                <div class="text-xs text-slate-400 font-bold">最早授業の1時間前</div>
-                                <div class="text-3xl md:text-4xl font-mono font-black text-amber-300 mt-1" id="home-departure-time">--:-- までに出発</div>
+                    <!-- 出発リミット（本日 ＆ 翌日） -->
+                    <div class="bg-slate-800 border-2 border-amber-500/40 p-6 rounded-2xl shadow-xl md:col-span-2 flex flex-col justify-between bg-gradient-to-br from-slate-800 via-slate-800 to-amber-950/30 space-y-4">
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-amber-400 uppercase tracking-wider">🚶‍♂️ 本日の出発リミット</span>
+                                <span id="home-today-date-label" class="text-xs text-slate-400 font-bold">--月--日</span>
                             </div>
-                            <div class="text-right sm:max-w-[200px]">
-                                <div class="text-[11px] text-slate-400 font-bold">最初の授業</div>
-                                <div class="text-sm font-black text-white truncate" id="home-first-class">本日の講義はありません</div>
+                            <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-900/80 p-3.5 rounded-xl border border-amber-500/30 shadow-inner gap-3">
+                                <div>
+                                    <div class="text-3xl font-mono font-black text-amber-300" id="home-departure-time">--:-- までに出発</div>
+                                </div>
+                                <div class="text-right sm:max-w-[220px]">
+                                    <div class="text-[10px] text-slate-400 font-bold">最初の授業・予定</div>
+                                    <div class="text-xs font-black text-white truncate" id="home-first-class">本日の講義はありません</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 明日の出発リミット（自動反映） -->
+                        <div class="border-t border-slate-700 pt-3">
+                            <div class="flex justify-between items-center mb-1">
+                                <span class="text-xs font-bold text-indigo-400 uppercase tracking-wider">🏃‍♂️ 明日の出発リミット（自動反映）</span>
+                                <span id="home-tomorrow-date-label" class="text-xs text-slate-400 font-bold">--月--日</span>
+                            </div>
+                            <div class="flex flex-col sm:flex-row justify-between items-center bg-slate-900/80 p-3.5 rounded-xl border border-indigo-500/30 shadow-inner gap-3">
+                                <div>
+                                    <div class="text-2xl font-mono font-black text-indigo-300" id="home-tomorrow-departure-time">--:-- までに出発</div>
+                                </div>
+                                <div class="text-right sm:max-w-[220px]">
+                                    <div class="text-[10px] text-slate-400 font-bold">明日の最初の授業・予定</div>
+                                    <div class="text-xs font-black text-white truncate" id="home-tomorrow-first-class">明日の講義はありません</div>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -212,20 +228,21 @@
                 </div>
             </div>
 
-            <!-- ================= 2. カレンダー画面 ================= -->
+            <!-- ================= 2. カレンダー画面 (3モード切替) ================= -->
             <div id="tab-calendar" class="space-y-6 hidden">
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl">
                     <div class="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
-                        <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-700">
-                            <button onclick="setCalMode('univ')" id="cal-mode-univ" class="px-5 py-2 rounded-xl text-sm font-black transition bg-theme-600 text-white shadow">🎓 大学カレンダー</button>
-                            <button onclick="setCalMode('general')" id="cal-mode-general" class="px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white">📅 一般カレンダー</button>
+                        <div class="flex flex-wrap bg-slate-900 p-1.5 rounded-2xl border border-slate-700 gap-1">
+                            <button onclick="setCalMode('univ')" id="cal-mode-univ" class="px-4 py-2 rounded-xl text-xs font-black transition bg-theme-600 text-white shadow">🎓 大学カレンダー</button>
+                            <button onclick="setCalMode('general')" id="cal-mode-general" class="px-4 py-2 rounded-xl text-xs font-black transition text-slate-400 hover:text-white">📅 一般カレンダー</button>
+                            <button onclick="setCalMode('both')" id="cal-mode-both" class="px-4 py-2 rounded-xl text-xs font-black transition text-slate-400 hover:text-white">👑 総合カレンダー</button>
                         </div>
                         <div class="flex items-center space-x-4">
                             <button onclick="changeMonth(-1)" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-xl text-base font-bold">&lt;</button>
                             <h2 id="calendar-title" class="text-xl font-black text-white w-40 text-center">2026年 10月</h2>
                             <button onclick="changeMonth(1)" class="bg-slate-700 hover:bg-slate-600 px-4 py-2 rounded-xl text-base font-bold">&gt;</button>
                         </div>
-                        <button onclick="openEventModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-5 py-2.5 rounded-xl text-sm font-black shadow-lg">＋ 予定を追加（繰り返し対応）</button>
+                        <button onclick="openEventModal()" class="bg-theme-600 hover:bg-theme-500 text-white px-5 py-2.5 rounded-xl text-sm font-black shadow-lg">＋ 予定を追加</button>
                     </div>
 
                     <div class="grid grid-cols-7 gap-2 text-center text-sm font-bold text-slate-400 mb-3">
@@ -235,17 +252,17 @@
                 </div>
             </div>
 
-            <!-- ================= 3. 大学時間割画面 (2コマ連続対応) ================= -->
+            <!-- ================= 3. 大学時間割画面 (欠席回数カウンター付き) ================= -->
             <div id="tab-univ" class="space-y-6 hidden">
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-700 pb-4">
                         <div>
-                            <h2 class="text-xl font-black text-white flex items-center gap-2">🎓 大学時間割マネージャー (2コマ連続対応)</h2>
-                            <p class="text-xs text-slate-400 mt-1">前期・後期の時間割設定。2コマ連続の授業も指定可能です。</p>
+                            <h2 class="text-xl font-black text-white flex items-center gap-2">🎓 大学時間割 ＆ 欠席回数マネージャー</h2>
+                            <p class="text-xs text-slate-400 mt-1">2コマ連続対応、各講義の欠席回数を記録できます。</p>
                         </div>
                         <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-700">
-                            <button onclick="setUnivSemester('zenki')" id="univ-sem-zenki" class="px-5 py-2 rounded-xl text-sm font-black transition bg-amber-600 text-slate-950 shadow">前期 (4月〜9月)</button>
-                            <button onclick="setUnivSemester('kouki')" id="univ-sem-kouki" class="px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white">後期 (10月〜3月)</button>
+                            <button onclick="setUnivSemester('zenki')" id="univ-sem-zenki" class="px-5 py-2 rounded-xl text-sm font-black transition bg-amber-600 text-slate-950 shadow">前期</button>
+                            <button onclick="setUnivSemester('kouki')" id="univ-sem-kouki" class="px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white">後期</button>
                         </div>
                     </div>
 
@@ -266,7 +283,7 @@
                     </div>
                     <div class="flex justify-end">
                         <button onclick="saveUnivTimetable()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-6 py-3 rounded-xl shadow-lg text-sm transition">
-                            時間割を保存して同期する
+                            時間割・欠席回数を保存して同期する
                         </button>
                     </div>
                 </div>
@@ -382,6 +399,56 @@
 
             <!-- ================= 6. その他編集画面 ================= -->
             <div id="tab-settings" class="space-y-6 hidden">
+                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
+                        📅 大学・学期期間設定
+                    </h2>
+                    <p class="text-xs text-slate-300">前期・後期が適用される「月と日（MM-DD）」の範囲を指定できます。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
+                            <div class="text-sm font-bold text-amber-300">前期 期間設定</div>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                    <label class="block text-slate-400 mb-1 font-bold">開始日 (MM-DD)</label>
+                                    <input type="text" id="cfg-zenki-start" placeholder="04-01" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1 font-bold">終了日 (MM-DD)</label>
+                                    <input type="text" id="cfg-zenki-end" placeholder="09-30" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 space-y-3">
+                            <div class="text-sm font-bold text-indigo-300">後期 期間設定</div>
+                            <div class="grid grid-cols-2 gap-2 text-xs">
+                                <div>
+                                    <label class="block text-slate-400 mb-1 font-bold">開始日 (MM-DD)</label>
+                                    <input type="text" id="cfg-kouki-start" placeholder="10-01" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+                                </div>
+                                <div>
+                                    <label class="block text-slate-400 mb-1 font-bold">終了日 (MM-DD)</label>
+                                    <input type="text" id="cfg-kouki-end" placeholder="03-31" class="w-full bg-slate-800 border border-slate-700 rounded-lg px-3 py-2 text-white font-mono">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="flex justify-end">
+                        <button onclick="saveSemesterConfig()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow">期間設定を保存</button>
+                    </div>
+                </div>
+
+                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
+                        🔊 効果音 (yarimasune.mp3) 音量設定
+                    </h2>
+                    <div class="flex items-center space-x-4 bg-slate-900/80 p-4 rounded-xl border border-slate-700">
+                        <span class="text-xs text-slate-300 font-bold">音量</span>
+                        <input type="range" id="sound-volume-slider" min="0" max="100" value="80" oninput="changeSoundVolume(this.value)" class="flex-1 accent-amber-500">
+                        <span id="sound-volume-label" class="text-xs text-amber-400 font-mono font-bold w-10 text-right">80%</span>
+                        <button onclick="playYarimasuneSound()" class="bg-slate-700 hover:bg-slate-600 text-white px-3 py-1.5 rounded-xl text-xs font-bold">テスト再生</button>
+                    </div>
+                </div>
+
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
                         🔄 端末間データ共有 (PC ⇄ スマホ)
@@ -589,6 +656,13 @@
         let partTimes = JSON.parse(localStorage.getItem('kk_parttimes')) || [];
         let memos = JSON.parse(localStorage.getItem('kk_memos')) || [];
         
+        let semesterConfig = JSON.parse(localStorage.getItem('kk_semester_config')) || {
+            zenkiStart: "04-01",
+            zenkiEnd: "09-30",
+            koukiStart: "10-01",
+            koukiEnd: "03-31"
+        };
+
         let univTimetable = JSON.parse(localStorage.getItem('kk_univ_timetable')) || {
             zenki: { 1: ["","","","",""], 2: ["","","","",""], 3: ["","","","",""], 4: ["","","","",""], 5: ["","","","",""] },
             kouki: { 1: ["","","","",""], 2: ["","","","",""], 3: ["","","","",""], 4: ["","","","",""], 5: ["","","","",""] }
@@ -610,7 +684,7 @@
         let timeChartInstance = null;
         let currentYear = new Date().getFullYear();
         let currentMonth = new Date().getMonth();
-        let calMode = 'univ';
+        let calMode = 'univ'; // 'univ' | 'general' | 'both'
         let currentUnivSemester = 'zenki';
         let currentTaskCategory = '動画編集';
 
@@ -725,7 +799,24 @@
             }
         }
 
-        // 大学時間割のマイグレーション（2コマ連続対応データ構造への変換）
+        function playYarimasuneSound() {
+            const audio = document.getElementById('yarimasune-audio');
+            if (audio) {
+                const sliderVal = document.getElementById('sound-volume-slider')?.value || 80;
+                audio.volume = sliderVal / 100;
+                audio.currentTime = 0;
+                audio.play().catch(err => {
+                    console.log('Audio autoplay prevented or file missing:', err);
+                });
+            }
+        }
+
+        function changeSoundVolume(val) {
+            const label = document.getElementById('sound-volume-label');
+            if (label) label.textContent = `${val}%`;
+            localStorage.setItem('kk_sound_vol', val);
+        }
+
         function migrateUnivTimetable() {
             ['zenki', 'kouki'].forEach(sem => {
                 if (!univTimetable[sem]) univTimetable[sem] = {};
@@ -734,9 +825,12 @@
                     for (let d = 0; d < 5; d++) {
                         let val = univTimetable[sem][p][d];
                         if (typeof val === 'string') {
-                            univTimetable[sem][p][d] = { name: val, span: 1 };
+                            univTimetable[sem][p][d] = { name: val, span: 1, absent: 0 };
                         } else if (!val) {
-                            univTimetable[sem][p][d] = { name: '', span: 1 };
+                            univTimetable[sem][p][d] = { name: '', span: 1, absent: 0 };
+                        } else {
+                            if (val.absent === undefined) val.absent = 0;
+                            if (val.span === undefined) val.span = 1;
                         }
                     }
                 }
@@ -768,6 +862,19 @@
             const yearSel = document.getElementById('home-year-select');
             if (yearSel) yearSel.value = new Date().getFullYear();
 
+            const savedVol = localStorage.getItem('kk_sound_vol');
+            if (savedVol !== null) {
+                const slider = document.getElementById('sound-volume-slider');
+                if (slider) slider.value = savedVol;
+                const label = document.getElementById('sound-volume-label');
+                if (label) label.textContent = `${savedVol}%`;
+            }
+
+            document.getElementById('cfg-zenki-start').value = semesterConfig.zenkiStart;
+            document.getElementById('cfg-zenki-end').value = semesterConfig.zenkiEnd;
+            document.getElementById('cfg-kouki-start').value = semesterConfig.koukiStart;
+            document.getElementById('cfg-kouki-end').value = semesterConfig.koukiEnd;
+
             setInterval(() => {
                 updateWorldClock();
                 updateDepartureTimeWidget();
@@ -776,6 +883,30 @@
             updateDepartureTimeWidget();
             renderUnivTimetableGrid();
         });
+
+        function saveSemesterConfig() {
+            semesterConfig.zenkiStart = document.getElementById('cfg-zenki-start').value.trim();
+            semesterConfig.zenkiEnd = document.getElementById('cfg-zenki-end').value.trim();
+            semesterConfig.koukiStart = document.getElementById('cfg-kouki-start').value.trim();
+            semesterConfig.koukiEnd = document.getElementById('cfg-kouki-end').value.trim();
+            localStorage.setItem('kk_semester_config', JSON.stringify(semesterConfig));
+            alert('学期期間設定を保存しました！');
+            renderHome();
+            renderCalendar();
+        }
+
+        function getActiveSemesterKey(dateObj) {
+            const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+            const d = String(dateObj.getDate()).padStart(2, '0');
+            const md = `${m}-${d}`;
+
+            if (semesterConfig.zenkiStart <= semesterConfig.zenkiEnd) {
+                if (md >= semesterConfig.zenkiStart && md <= semesterConfig.zenkiEnd) return 'zenki';
+            } else {
+                if (md >= semesterConfig.zenkiStart || md <= semesterConfig.zenkiEnd) return 'zenki';
+            }
+            return 'kouki';
+        }
 
         function updateWorldClock() {
             const now = new Date();
@@ -838,7 +969,7 @@
         }
 
         function exportData() {
-            const allData = { tasks, events, partTimes, memos, univTimetable, username: localStorage.getItem('kk_username'), theme: localStorage.getItem('kk_theme') };
+            const allData = { tasks, events, partTimes, memos, univTimetable, semesterConfig, username: localStorage.getItem('kk_username'), theme: localStorage.getItem('kk_theme') };
             const jsonStr = JSON.stringify(allData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -861,6 +992,7 @@
                     if (imported.partTimes) partTimes = imported.partTimes;
                     if (imported.memos) memos = imported.memos;
                     if (imported.univTimetable) univTimetable = imported.univTimetable;
+                    if (imported.semesterConfig) semesterConfig = imported.semesterConfig;
                     if (imported.username) localStorage.setItem('kk_username', imported.username);
                     if (imported.theme) localStorage.setItem('kk_theme', imported.theme);
                     saveData();
@@ -913,7 +1045,7 @@
                 const info = classTimes[period];
                 let rowHtml = `<td class="py-3 px-2 font-mono text-xs text-amber-400 font-bold">${period}限<br><span class="text-[10px] text-slate-400">${info.start}~${info.end}</span></td>`;
                 for (let dayIdx = 0; dayIdx < 5; dayIdx++) {
-                    const cell = data[period][dayIdx] || { name: '', span: 1 };
+                    const cell = data[period][dayIdx] || { name: '', span: 1, absent: 0 };
                     
                     let isCoveredByPrevious = false;
                     if (period > 1) {
@@ -931,18 +1063,35 @@
                         `;
                     } else {
                         rowHtml += `
-                            <td class="py-2 px-1 space-y-1">
+                            <td class="py-2 px-1 space-y-1.5">
                                 <input type="text" value="${cell.name}" data-period="${period}" data-day="${dayIdx}" placeholder="講義名" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-xs text-center focus:border-amber-500 univ-name-input">
-                                <select data-period="${period}" data-day="${dayIdx}" class="w-full bg-slate-950 text-slate-300 text-[10px] rounded px-1 py-0.5 border border-slate-800 univ-span-select">
-                                    <option value="1" ${cell.span === 1 ? 'selected' : ''}>1コマ (90分)</option>
-                                    <option value="2" ${cell.span === 2 ? 'selected' : ''}>2コマ連続</option>
-                                </select>
+                                <div class="flex items-center justify-between px-1">
+                                    <select data-period="${period}" data-day="${dayIdx}" class="bg-slate-950 text-slate-300 text-[10px] rounded px-1 py-0.5 border border-slate-800 univ-span-select">
+                                        <option value="1" ${cell.span === 1 ? 'selected' : ''}>1コマ(90分)</option>
+                                        <option value="2" ${cell.span === 2 ? 'selected' : ''}>2コマ連続</option>
+                                    </select>
+                                    <div class="flex items-center space-x-1 text-[10px]">
+                                        <span class="text-rose-400 font-bold">欠席:${cell.absent || 0}</span>
+                                        <button type="button" onclick="changeAbsentCount(${period}, ${dayIdx}, 1)" class="bg-slate-700 hover:bg-slate-600 text-white px-1.5 py-0.5 rounded font-black">＋</button>
+                                        <button type="button" onclick="changeAbsentCount(${period}, ${dayIdx}, -1)" class="bg-slate-700 hover:bg-slate-600 text-white px-1.5 py-0.5 rounded font-black">ー</button>
+                                    </div>
+                                </div>
                             </td>
                         `;
                     }
                 }
                 tbody.innerHTML += `<tr>${rowHtml}</tr>`;
             }
+        }
+
+        function changeAbsentCount(period, dayIdx, delta) {
+            migrateUnivTimetable();
+            const data = univTimetable[currentUnivSemester];
+            if (!data[period][dayIdx].absent) data[period][dayIdx].absent = 0;
+            data[period][dayIdx].absent += delta;
+            if (data[period][dayIdx].absent < 0) data[period][dayIdx].absent = 0;
+            saveData();
+            renderUnivTimetableGrid();
         }
 
         function saveUnivTimetable() {
@@ -956,38 +1105,39 @@
                 const select = document.querySelector(`.univ-span-select[data-period="${p}"][data-day="${d}"]`);
                 const span = select ? parseInt(select.value, 10) : 1;
                 
-                data[p][d] = { name, span };
+                data[p][d].name = name;
+                data[p][d].span = span;
             });
 
             saveData();
             renderUnivTimetableGrid();
-            alert('大学時間割を保存し、カレンダーと出発リミットに同期しました！');
+            alert('大学時間割・欠席回数を保存しました！');
         }
 
         function updateDepartureTimeWidget() {
             migrateUnivTimetable();
             const now = new Date();
-            const m = now.getMonth() + 1;
-            const isZenki = (m >= 4 && m <= 9);
-            const semKey = isZenki ? 'zenki' : 'kouki';
-            
-            const dayOfWeek = now.getDay();
+
+            // 本日情報の計算
+            const semKeyToday = getActiveSemesterKey(now);
+            const dayOfWeekToday = now.getDay();
             const todayDateStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
-            
             document.getElementById('home-today-date-label').textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
 
-            let earliestPeriod = null;
-            let classInfo = "";
+            let earliestPeriodToday = null;
+            let classInfoToday = "";
 
-            if (dayOfWeek >= 1 && dayOfWeek <= 5) {
-                const dayIdx = dayOfWeek - 1;
-                const timetable = univTimetable[semKey];
+            if (dayOfWeekToday >= 1 && dayOfWeekToday <= 5) {
+                const dayIdx = dayOfWeekToday - 1;
+                const timetable = univTimetable[semKeyToday];
+                let skipNext = false;
                 for (let p = 1; p <= 5; p++) {
+                    if (skipNext) { skipNext = false; continue; }
                     const cell = timetable[p][dayIdx];
                     if (cell && cell.name) {
-                        earliestPeriod = p;
+                        earliestPeriodToday = p;
                         const endTimePeriod = cell.span === 2 ? Math.min(5, p + 1) : p;
-                        classInfo = cell.span === 2 ? `${p}〜${endTimePeriod}限: ${cell.name} (${classTimes[p].start}〜${classTimes[endTimePeriod].end})` : `${p}限: ${cell.name} (${classTimes[p].start}開始)`;
+                        classInfoToday = cell.span === 2 ? `${p}〜${endTimePeriod}限: ${cell.name} (${classTimes[p].start}〜${classTimes[endTimePeriod].end})` : `${p}限: ${cell.name} (${classTimes[p].start}開始)`;
                         break;
                     }
                 }
@@ -997,13 +1147,53 @@
             const depEl = document.getElementById('home-departure-time');
             const classEl = document.getElementById('home-first-class');
 
-            if (earliestPeriod !== null) {
-                const leaveTime = classTimes[earliestPeriod].leave;
+            if (earliestPeriodToday !== null) {
+                const leaveTime = classTimes[earliestPeriodToday].leave;
                 depEl.textContent = `${leaveTime} までに出発`;
-                classEl.textContent = classInfo;
+                classEl.textContent = classInfoToday;
             } else {
                 depEl.textContent = "出発リミットなし";
                 classEl.textContent = todayEvents.length > 0 ? todayEvents[0].title : "本日の講義・予定なし";
+            }
+
+            // 明日情報の計算 (自動反映)
+            const tomorrow = new Date(now);
+            tomorrow.setDate(now.getDate() + 1);
+            const semKeyTom = getActiveSemesterKey(tomorrow);
+            const dayOfWeekTom = tomorrow.getDay();
+            const tomDateStr = `${tomorrow.getFullYear()}-${String(tomorrow.getMonth() + 1).padStart(2, '0')}-${String(tomorrow.getDate()).padStart(2, '0')}`;
+            document.getElementById('home-tomorrow-date-label').textContent = `${tomorrow.getMonth() + 1}月${tomorrow.getDate()}日`;
+
+            let earliestPeriodTom = null;
+            let classInfoTom = "";
+
+            if (dayOfWeekTom >= 1 && dayOfWeekTom <= 5) {
+                const dayIdx = dayOfWeekTom - 1;
+                const timetable = univTimetable[semKeyTom];
+                let skipNext = false;
+                for (let p = 1; p <= 5; p++) {
+                    if (skipNext) { skipNext = false; continue; }
+                    const cell = timetable[p][dayIdx];
+                    if (cell && cell.name) {
+                        earliestPeriodTom = p;
+                        const endTimePeriod = cell.span === 2 ? Math.min(5, p + 1) : p;
+                        classInfoTom = cell.span === 2 ? `${p}〜${endTimePeriod}限: ${cell.name} (${classTimes[p].start}〜${classTimes[endTimePeriod].end})` : `${p}限: ${cell.name} (${classTimes[p].start}開始)`;
+                        break;
+                    }
+                }
+            }
+
+            const tomEvents = events.filter(e => e.date === tomDateStr);
+            const depTomEl = document.getElementById('home-tomorrow-departure-time');
+            const classTomEl = document.getElementById('home-tomorrow-first-class');
+
+            if (earliestPeriodTom !== null) {
+                const leaveTime = classTimes[earliestPeriodTom].leave;
+                depTomEl.textContent = `${leaveTime} までに出発`;
+                classTomEl.textContent = classInfoTom;
+            } else {
+                depTomEl.textContent = "出発リミットなし";
+                classTomEl.textContent = tomEvents.length > 0 ? tomEvents[0].title : "明日の講義・予定なし";
             }
         }
 
@@ -1080,8 +1270,7 @@
 
             const todayStr = now.toISOString().split('T')[0];
             const dayOfWeek = now.getDay();
-            const m = now.getMonth() + 1;
-            const semKey = (m >= 4 && m <= 9) ? 'zenki' : 'kouki';
+            const semKey = getActiveSemesterKey(now);
             
             const evContainer = document.getElementById('home-today-events');
             evContainer.innerHTML = '';
@@ -1091,10 +1280,7 @@
                 const timetable = univTimetable[semKey];
                 let skipNext = false;
                 for (let p = 1; p <= 5; p++) {
-                    if (skipNext) {
-                        skipNext = false;
-                        continue;
-                    }
+                    if (skipNext) { skipNext = false; continue; }
                     const cell = timetable[p][dayIdx];
                     if (cell && cell.name) {
                         const endTimePeriod = cell.span === 2 ? Math.min(5, p + 1) : p;
@@ -1146,8 +1332,9 @@
 
         function setCalMode(mode) {
             calMode = mode;
-            document.getElementById('cal-mode-univ').className = mode === 'univ' ? "px-5 py-2 rounded-xl text-sm font-black transition bg-theme-600 text-white shadow" : "px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white";
-            document.getElementById('cal-mode-general').className = mode === 'general' ? "px-5 py-2 rounded-xl text-sm font-black transition bg-theme-600 text-white shadow" : "px-5 py-2 rounded-xl text-sm font-black transition text-slate-400 hover:text-white";
+            document.getElementById('cal-mode-univ').className = mode === 'univ' ? "px-4 py-2 rounded-xl text-xs font-black transition bg-theme-600 text-white shadow" : "px-4 py-2 rounded-xl text-xs font-black transition text-slate-400 hover:text-white";
+            document.getElementById('cal-mode-general').className = mode === 'general' ? "px-4 py-2 rounded-xl text-xs font-black transition bg-theme-600 text-white shadow" : "px-4 py-2 rounded-xl text-xs font-black transition text-slate-400 hover:text-white";
+            document.getElementById('cal-mode-both').className = mode === 'both' ? "px-4 py-2 rounded-xl text-xs font-black transition bg-theme-600 text-white shadow" : "px-4 py-2 rounded-xl text-xs font-black transition text-slate-400 hover:text-white";
             renderCalendar();
         }
 
@@ -1171,17 +1358,13 @@
                 const dayOfWeek = dateObj.getDay();
 
                 let univEventsHtml = '';
-                if (calMode === 'univ' && dayOfWeek >= 1 && dayOfWeek <= 5) {
-                    const m = currentMonth + 1;
-                    const semKey = (m >= 4 && m <= 9) ? 'zenki' : 'kouki';
+                if ((calMode === 'univ' || calMode === 'both') && dayOfWeek >= 1 && dayOfWeek <= 5) {
+                    const semKey = getActiveSemesterKey(dateObj);
                     const dayIdx = dayOfWeek - 1;
                     const timetable = univTimetable[semKey];
                     let skipNext = false;
                     for (let p = 1; p <= 5; p++) {
-                        if (skipNext) {
-                            skipNext = false;
-                            continue;
-                        }
+                        if (skipNext) { skipNext = false; continue; }
                         const cell = timetable[p][dayIdx];
                         if (cell && cell.name) {
                             const label = cell.span === 2 ? `${p}〜${p+1}限: ${cell.name}` : `${p}限: ${cell.name}`;
@@ -1191,17 +1374,20 @@
                     }
                 }
 
-                const dayEvents = events.filter(e => e.date === dateStr && (calMode === 'general' || e.type === 'general'));
-                let evHtml = univEventsHtml;
-                dayEvents.forEach(ev => {
-                    evHtml += `
-                        <div class="text-xs px-1.5 py-1 rounded-lg flex justify-between items-center mb-1 bg-theme-500/20 text-theme-300 font-bold shadow-sm">
-                            <span class="truncate">${ev.title}</span>
-                            <button onclick="deleteEvent(${ev.id})" class="text-slate-400 hover:text-rose-400 font-black ml-1">✕</button>
-                        </div>
-                    `;
-                });
+                let generalEventsHtml = '';
+                if (calMode === 'general' || calMode === 'both') {
+                    const dayEvents = events.filter(e => e.date === dateStr);
+                    dayEvents.forEach(ev => {
+                        generalEventsHtml += `
+                            <div class="text-xs px-1.5 py-1 rounded-lg flex justify-between items-center mb-1 bg-theme-500/20 text-theme-300 font-bold shadow-sm">
+                                <span class="truncate">${ev.title}</span>
+                                <button onclick="deleteEvent(${ev.id})" class="text-slate-400 hover:text-rose-400 font-black ml-1">✕</button>
+                            </div>
+                        `;
+                    });
+                }
 
+                const evHtml = univEventsHtml + generalEventsHtml;
                 const boxStyle = isToday 
                     ? "bg-slate-900 border-2 border-amber-400 shadow-[0_0_15px_rgba(251,191,36,0.5)] ring-2 ring-amber-400/50" 
                     : "bg-slate-900/80 border-2 border-slate-700/60";
@@ -1410,7 +1596,12 @@
             pauseTimer();
             if (activeTaskId) {
                 const task = tasks.find(t => t.id === activeTaskId);
-                if (task) { task.status = '完了'; saveData(); alert(`「${task.title}」を完了にして保存しました！`); }
+                if (task) { 
+                    task.status = '完了'; 
+                    playYarimasuneSound();
+                    saveData(); 
+                    alert(`「${task.title}」を完了にして保存しました！`); 
+                }
             }
         }
 
@@ -1455,12 +1646,22 @@
             const status = document.getElementById('task-status-select').value;
             const category = currentTaskCategory;
 
+            let isNewlyCompleted = false;
             if (editId) {
                 const task = tasks.find(t => t.id == editId);
-                if (task) { task.title = title; task.reward = reward; task.duedate = duedate; task.seconds = parsedHours * 3600; task.status = status; task.category = category; }
+                if (task) {
+                    if (task.status !== '完了' && status === '完了') isNewlyCompleted = true;
+                    task.title = title; task.reward = reward; task.duedate = duedate; task.seconds = parsedHours * 3600; task.status = status; task.category = category;
+                }
             } else {
+                if (status === '完了') isNewlyCompleted = true;
                 tasks.push({ id: Date.now(), title, reward, duedate, seconds: parsedHours * 3600, status, category });
             }
+
+            if (isNewlyCompleted) {
+                playYarimasuneSound();
+            }
+
             saveData();
             closeTaskModal();
         }
@@ -1569,6 +1770,7 @@
             document.getElementById('pt-edit-id').value = '';
             document.getElementById('modal-pt-title').textContent = 'バイト勤務・給与詳細登録';
             document.getElementById('pt-name').value = '';
+            document.getElementById('pt-date').value = '';
             document.getElementById('pt-hours').value = '';
             document.getElementById('pt-base-wage').value = '';
             document.getElementById('pt-midnight-hours').value = '0';
@@ -1616,6 +1818,8 @@
             } else {
                 partTimes.push({ id: Date.now(), name, date, hoursRaw, baseWage, midnightHrs, overtimeHrs, transport, payday });
             }
+
+            playYarimasuneSound();
             saveData();
             closePtModal();
         }
