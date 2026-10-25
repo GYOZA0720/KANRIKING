@@ -27,11 +27,33 @@
             }
         }
     </script>
+    <style>
+        @keyframes pulseGlow {
+            0% { transform: scale(0.95); opacity: 0; filter: brightness(3); }
+            50% { transform: scale(1.05); opacity: 1; filter: brightness(2); box-shadow: 0 0 50px rgba(251,191,36,0.9); }
+            100% { transform: scale(1); opacity: 1; filter: brightness(1); }
+        }
+        .animate-kira {
+            animation: pulseGlow 0.8s ease-out forwards;
+        }
+    </style>
 </head>
 <body class="bg-slate-900 text-slate-100 min-h-screen font-sans text-base md:text-lg">
 
-    <!-- 効果音用音声要素 -->
+    <!-- 効果音・特殊演出用音声/映像要素 -->
     <audio id="yarimasune-audio" src="yarimasune.mp3" preload="auto"></audio>
+    <audio id="drumroll-audio" src="ドラムロール.mp3" preload="auto"></audio>
+    <audio id="kira-audio" src="キラッ2.mp3" preload="auto"></audio>
+
+    <!-- 特殊演出オーバーレイ (土方: video1.mp4) -->
+    <div id="special-video-overlay" class="fixed inset-0 bg-black z-50 hidden flex items-center justify-center">
+        <video id="special-video" src="video1.mp4" class="w-full h-full object-contain" preload="auto"></video>
+    </div>
+
+    <!-- 特殊演出オーバーレイ (野獣先輩: gazou1.jpg) -->
+    <div id="special-image-overlay" class="fixed inset-0 bg-black z-50 hidden flex flex-col items-center justify-center p-4">
+        <img id="special-gazou" src="gazou1.jpg" alt="Special" class="max-h-[85vh] max-w-[85vh] object-contain rounded-2xl shadow-2xl opacity-0">
+    </div>
 
     <!-- ログイン画面 -->
     <div id="login-screen" class="fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4">
@@ -89,13 +111,19 @@
 
             <!-- ================= 1. ホーム画面 ================= -->
             <div id="tab-home" class="space-y-8">
-                <!-- 本日の格言 ＆ 世界時計 -->
+                <!-- ランダム格言 ＆ 世界時計 -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
-                    <div class="lg:col-span-2 text-center py-8 px-6 bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-900 border-2 border-indigo-500/50 rounded-3xl shadow-[0_0_35px_rgba(99,102,241,0.25)] space-y-2">
-                        <div class="text-xs font-bold text-indigo-400 uppercase tracking-widest">👑 本日の格言</div>
-                        <h2 class="font-king text-2xl md:text-4xl font-extrabold tracking-widest text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-indigo-300 to-purple-400 drop-shadow-lg">
-                            「天は鳴き、大地は震える。」
-                        </h2>
+                    <div class="lg:col-span-2 text-center py-8 px-6 bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-900 border-2 border-indigo-500/50 rounded-3xl shadow-[0_0_35px_rgba(99,102,241,0.25)] space-y-4">
+                        <div class="flex justify-center items-center gap-3">
+                            <span class="text-xs font-bold text-indigo-400 uppercase tracking-widest">👑 ランダム格言ルーレット</span>
+                            <button onclick="spinRoulette()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-4 py-1.5 rounded-xl text-xs transition shadow cursor-pointer active:scale-95">🎲 ランダム決定</button>
+                        </div>
+                        <div class="min-h-[90px] flex flex-col justify-center items-center px-4">
+                            <h2 id="roulette-quote-text" class="font-king text-xl md:text-3xl font-extrabold tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-indigo-300 to-purple-400 drop-shadow-lg">
+                                「天は鳴き、大地は震えるだろうね。」
+                            </h2>
+                            <div id="roulette-quote-author" class="text-xs md:text-sm text-slate-400 font-bold mt-2">ーノムリッシュ先輩</div>
+                        </div>
                     </div>
                     <div class="bg-slate-950/90 p-5 rounded-2xl border border-amber-500/30 text-right shadow-inner">
                         <div class="text-[10px] text-amber-400/80 font-bold uppercase tracking-wider">世界時計 (日本 / JST)</div>
@@ -103,7 +131,7 @@
                     </div>
                 </div>
 
-                <!-- YouTube 音楽プレイヤーウィジェット（音量調節ボタン付き） -->
+                <!-- YouTube 音楽プレイヤーウィジェット -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <div class="flex justify-between items-center">
                         <h2 class="text-sm font-black text-slate-300 flex items-center gap-2">🎵 YouTube BGM プレイヤー</h2>
@@ -399,6 +427,35 @@
 
             <!-- ================= 6. その他編集画面 ================= -->
             <div id="tab-settings" class="space-y-6 hidden">
+                <!-- 特殊演出ON/OFF設定 -->
+                <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
+                    <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
+                        ✨ 特殊演出 ON/OFF設定
+                    </h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+                            <div>
+                                <div class="text-sm font-bold text-white">土方「やったぜ。」演出</div>
+                                <div class="text-xs text-slate-400">動画(video1.mp4)の自動再生と明転演出</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-special-hijikata" onchange="saveSpecialSettings()" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                            </label>
+                        </div>
+                        <div class="bg-slate-900/80 p-4 rounded-xl border border-slate-700 flex justify-between items-center">
+                            <div>
+                                <div class="text-sm font-bold text-white">野獣先輩「やりますねぇ！」演出</div>
+                                <div class="text-xs text-slate-400">ドラムロールと画像(gazou1.jpg)の発光演出</div>
+                            </div>
+                            <label class="relative inline-flex items-center cursor-pointer">
+                                <input type="checkbox" id="setting-special-yaju" onchange="saveSpecialSettings()" class="sr-only peer" checked>
+                                <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-amber-600"></div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
                     <h2 class="text-lg font-black text-amber-400 border-b border-slate-700 pb-3 flex items-center gap-2">
                         📅 大学・学期期間設定
@@ -656,6 +713,11 @@
         let partTimes = JSON.parse(localStorage.getItem('kk_parttimes')) || [];
         let memos = JSON.parse(localStorage.getItem('kk_memos')) || [];
         
+        let specialSettings = JSON.parse(localStorage.getItem('kk_special_settings')) || {
+            hijikata: true,
+            yaju: true
+        };
+
         let semesterConfig = JSON.parse(localStorage.getItem('kk_semester_config')) || {
             zenkiStart: "04-01",
             zenkiEnd: "09-30",
@@ -676,6 +738,19 @@
             5: { start: "16:40", end: "18:10", leave: "15:40" }
         };
 
+        const quotesList = [
+            { text: "「天は鳴き、大地は震えるだろうね。」", author: "ーノムリッシュ先輩", special: null },
+            { text: "「いつしか雨はやみ、そこには虹がかかるんだよなぁ...」", author: "ー遠野＆田所", special: null },
+            { text: "「王道を征く」", author: "ー田所浩二", special: null },
+            { text: "「 †悔い改めて†」", author: "ー野獣と化した先輩", special: null },
+            { text: "「ありがとナス！」", author: "ーKBTIT", special: null },
+            { text: "「いや無理かわかんないだろ！」", author: "ーヒグマ", special: null },
+            { text: "「ご立派ァ！」", author: "ー杉田智和", special: null },
+            { text: "「アセンションの時、彼の語録を聞け」", author: "ー淫夢の王", special: null },
+            { text: "「やったぜ。」", author: "ー土方", special: "hijikata" },
+            { text: "「やりますねぇ！」", author: "ー野獣先輩", special: "yaju" }
+        ];
+
         let activeTaskId = null;
         let timerInterval = null;
         let elapsedSeconds = 0;
@@ -688,7 +763,151 @@
         let currentUnivSemester = 'zenki';
         let currentTaskCategory = '動画編集';
 
-        // YouTube API プレイヤー制御 ＆ 音量調節
+        // 特殊演出・ルーレット制御
+        let activeSpecialType = null;
+        let yajuTimeout1 = null;
+        let yajuTimeout2 = null;
+
+        function spinRoulette() {
+            const textEl = document.getElementById('roulette-quote-text');
+            const authorEl = document.getElementById('roulette-quote-author');
+            let count = 0;
+            const maxCount = 15;
+            const interval = 80;
+
+            const rollTimer = setInterval(() => {
+                const randIndex = Math.floor(Math.random() * quotesList.length);
+                const q = quotesList[randIndex];
+                textEl.textContent = "どぅるるるるるる…";
+                authorEl.textContent = q.author;
+                count++;
+
+                if (count >= maxCount) {
+                    clearInterval(rollTimer);
+                    // 最終決定
+                    let finalQ = quotesList[Math.floor(Math.random() * quotesList.length)];
+                    textEl.textContent = finalQ.text;
+                    authorEl.textContent = finalQ.author;
+
+                    // 特殊演出の判定
+                    if (finalQ.special === 'hijikata' && specialSettings.hijikata) {
+                        triggerHijikataSpecial();
+                    } else if (finalQ.special === 'yaju' && specialSettings.yaju) {
+                        triggerYajuSpecial();
+                    }
+                }
+            }, interval);
+        }
+
+        // 土方演出 (video1.mp4)
+        function triggerHijikataSpecial() {
+            activeSpecialType = 'hijikata';
+            const overlay = document.getElementById('special-video-overlay');
+            const video = document.getElementById('special-video');
+            overlay.classList.remove('hidden');
+            video.currentTime = 0;
+            
+            // 19秒〜20秒の間 (19.5秒時点) で明転/映像切り替え
+            video.play().catch(e => console.log(e));
+
+            const checkTimeInterval = setInterval(() => {
+                if (activeSpecialType !== 'hijikata') {
+                    clearInterval(checkTimeInterval);
+                    return;
+                }
+                if (video.currentTime >= 19.5) {
+                    // ここで明転・映像切り替えの演出を適用
+                    video.style.filter = 'brightness(1.5) contrast(1.1)';
+                }
+            }, 100);
+
+            video.onended = () => {
+                clearInterval(checkTimeInterval);
+                closeSpecialOverlay();
+            };
+        }
+
+        // 野獣先輩演出 (gazou1.jpg + ドラムロール + キラッ2 + yarimasune)
+        function triggerYajuSpecial() {
+            activeSpecialType = 'yaju';
+            const overlay = document.getElementById('special-image-overlay');
+            const img = document.getElementById('special-gazou');
+            overlay.classList.remove('hidden');
+            img.classList.remove('animate-kira');
+            img.style.opacity = '0';
+
+            const drum = document.getElementById('drumroll-audio');
+            const kira = document.getElementById('kira-audio');
+            const yarimasune = document.getElementById('yarimasune-audio');
+
+            const sliderVal = document.getElementById('sound-volume-slider')?.value || 80;
+            const vol = sliderVal / 100;
+            drum.volume = vol;
+            kira.volume = vol;
+            yarimasune.volume = vol;
+
+            drum.currentTime = 0;
+            drum.play().catch(e => console.log(e));
+
+            // ドラムロール終了後にキラッ2 + gazou1.jpg発光
+            drum.onended = () => {
+                if (activeSpecialType !== 'yaju') return;
+                img.style.opacity = '1';
+                img.classList.add('animate-kira');
+                kira.currentTime = 0;
+                kira.play().catch(e => console.log(e));
+
+                // その直後に yarimasune.mp3 再生
+                yajuTimeout1 = setTimeout(() => {
+                    if (activeSpecialType !== 'yaju') return;
+                    yarimasune.currentTime = 0;
+                    yarimasune.play().catch(e => console.log(e));
+
+                    // yarimasune再生から3秒後に通常画面に戻る
+                    yajuTimeout2 = setTimeout(() => {
+                        if (activeSpecialType === 'yaju') {
+                            closeSpecialOverlay();
+                        }
+                    }, 3000);
+                }, 300);
+            };
+        }
+
+        function closeSpecialOverlay() {
+            activeSpecialType = null;
+            if (yajuTimeout1) clearTimeout(yajuTimeout1);
+            if (yajuTimeout2) clearTimeout(yajuTimeout2);
+
+            const vOverlay = document.getElementById('special-video-overlay');
+            const video = document.getElementById('special-video');
+            video.pause();
+            video.style.filter = 'none';
+            vOverlay.classList.add('hidden');
+
+            const iOverlay = document.getElementById('special-image-overlay');
+            const img = document.getElementById('special-gazou');
+            img.classList.remove('animate-kira');
+            iOverlay.classList.add('hidden');
+
+            // 音声も停止
+            document.getElementById('drumroll-audio').pause();
+            document.getElementById('kira-audio').pause();
+        }
+
+        // ESCキー対応
+        window.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && activeSpecialType !== null) {
+                closeSpecialOverlay();
+            }
+        });
+
+        function saveSpecialSettings() {
+            specialSettings.hijikata = document.getElementById('setting-special-hijikata').checked;
+            specialSettings.yaju = document.getElementById('setting-special-yaju').checked;
+            localStorage.setItem('kk_special_settings', JSON.stringify(specialSettings));
+        }
+
+        // YouTube プレイヤー制御
         let ytPlayer = null;
         let ytApiReady = false;
         let pendingVideoId = null;
@@ -873,6 +1092,9 @@
             document.getElementById('cfg-kouki-start').value = semesterConfig.koukiStart;
             document.getElementById('cfg-kouki-end').value = semesterConfig.koukiEnd;
 
+            document.getElementById('setting-special-hijikata').checked = specialSettings.hijikata;
+            document.getElementById('setting-special-yaju').checked = specialSettings.yaju;
+
             setInterval(() => {
                 updateWorldClock();
                 updateDepartureTimeWidget();
@@ -967,7 +1189,7 @@
         }
 
         function exportData() {
-            const allData = { tasks, events, partTimes, memos, univTimetable, semesterConfig, username: localStorage.getItem('kk_username'), theme: localStorage.getItem('kk_theme') };
+            const allData = { tasks, events, partTimes, memos, univTimetable, semesterConfig, specialSettings, username: localStorage.getItem('kk_username'), theme: localStorage.getItem('kk_theme') };
             const jsonStr = JSON.stringify(allData, null, 2);
             const blob = new Blob([jsonStr], { type: 'application/json' });
             const url = URL.createObjectURL(blob);
@@ -991,6 +1213,7 @@
                     if (imported.memos) memos = imported.memos;
                     if (imported.univTimetable) univTimetable = imported.univTimetable;
                     if (imported.semesterConfig) semesterConfig = imported.semesterConfig;
+                    if (imported.specialSettings) specialSettings = imported.specialSettings;
                     if (imported.username) localStorage.setItem('kk_username', imported.username);
                     if (imported.theme) localStorage.setItem('kk_theme', imported.theme);
                     saveData();
