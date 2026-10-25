@@ -7,6 +7,8 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Shippori+Mincho:wght@800&display=swap">
+    <!-- YouTube IFrame Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
     <script>
         const savedTheme = localStorage.getItem('kk_theme') || 'slate';
         tailwind.config = {
@@ -84,7 +86,7 @@
 
             <!-- ================= 1. ホーム画面 ================= -->
             <div id="tab-home" class="space-y-8">
-                <!-- 本日の格言（美しく豪華なグラデーション復活） ＆ 世界時計 -->
+                <!-- 本日の格言 ＆ 世界時計 -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-center">
                     <div class="lg:col-span-2 text-center py-8 px-6 bg-gradient-to-r from-indigo-950 via-purple-950 to-slate-900 border-2 border-indigo-500/50 rounded-3xl shadow-[0_0_35px_rgba(99,102,241,0.25)] space-y-2">
                         <div class="text-xs font-bold text-indigo-400 uppercase tracking-widest">👑 本日の格言</div>
@@ -98,17 +100,41 @@
                     </div>
                 </div>
 
-                <!-- YouTube BGM プレイヤーウィジェット (新実装) -->
+                <!-- YouTube 音楽プレイヤーウィジェット (映像非表示・再生/停止/音量・指定ボタン追加) -->
                 <div class="bg-slate-800 border-2 border-slate-700 p-6 rounded-2xl shadow-xl space-y-4">
-                    <h2 class="text-sm font-black text-slate-300 flex items-center gap-2">🎵 YouTube BGM プレイヤー</h2>
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-sm font-black text-slate-300 flex items-center gap-2">🎵 YouTube BGM プレイヤー</h2>
+                        <span id="yt-status-badge" class="text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full font-bold">停止中</span>
+                    </div>
+
+                    <!-- 指定プリセットボタン -->
+                    <div class="flex flex-wrap gap-2 pt-1">
+                        <button onclick="playPresetYouTube('87-HVZhamfg', '【INMU KING】')" class="bg-gradient-to-r from-amber-600 to-amber-500 hover:from-amber-500 hover:to-amber-400 text-slate-950 font-black px-4 py-2 rounded-xl text-xs transition shadow">🔥 【INMU KING】</button>
+                        <button onclick="playPresetYouTube('m4jwC3n8UPM', '【あいうえすちつ】')" class="bg-gradient-to-r from-purple-600 to-indigo-600 hover:opacity-90 text-white font-black px-4 py-2 rounded-xl text-xs transition shadow">✨ 【あいうえすちつ】</button>
+                    </div>
+
+                    <!-- 自由入力 ＆ 再生ボタン -->
                     <div class="flex flex-col sm:flex-row gap-3">
-                        <input type="text" id="youtube-url-input" placeholder="YouTubeのURLまたは動画ID (例: dQw4w9WgXcQ)" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:outline-none">
-                        <div class="flex gap-2">
-                            <button onclick="playYouTubeBGM()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow">再生開始</button>
-                            <button onclick="stopYouTubeBGM()" class="bg-rose-600 hover:bg-rose-500 text-white font-black px-5 py-2.5 rounded-xl text-xs transition shadow">停止</button>
+                        <input type="text" id="youtube-url-input" placeholder="その他のYouTube URLまたは動画ID" class="flex-1 bg-slate-900 border border-slate-700 rounded-xl px-4 py-2.5 text-white text-sm focus:border-amber-500 focus:outline-none">
+                        <button onclick="playCustomYouTube()" class="bg-amber-600 hover:bg-amber-500 text-slate-950 font-black px-5 py-2.5 rounded-xl text-xs transition shadow">再生</button>
+                    </div>
+
+                    <!-- コントローラー（再生・一時停止・停止・音量） -->
+                    <div class="flex flex-wrap items-center justify-between bg-slate-900/80 p-4 rounded-xl border border-slate-700 gap-4">
+                        <div class="text-xs font-bold text-amber-300 truncate max-w-[200px]" id="yt-current-title">楽曲未選択</div>
+                        <div class="flex items-center space-x-2">
+                            <button onclick="pauseYouTube()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">一時停止</button>
+                            <button onclick="resumeYouTube()" class="bg-slate-700 hover:bg-slate-600 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">再開</button>
+                            <button onclick="stopYouTube()" class="bg-rose-600 hover:bg-rose-500 text-white font-bold px-3.5 py-2 rounded-xl text-xs transition">停止</button>
+                        </div>
+                        <div class="flex items-center space-x-2">
+                            <span class="text-xs text-slate-400 font-bold">音量</span>
+                            <input type="range" id="yt-volume-slider" min="0" max="100" value="50" oninput="changeYouTubeVolume(this.value)" class="w-24 accent-amber-500">
                         </div>
                     </div>
-                    <div id="youtube-player-container" class="hidden rounded-xl overflow-hidden border border-slate-700"></div>
+
+                    <!-- 映像を一切出さないための隠しプレイヤー要素 -->
+                    <div id="hidden-youtube-player" style="width: 1px; height: 1px; opacity: 0; position: absolute; pointer-events: none; overflow: hidden;"></div>
                 </div>
 
                 <!-- 収支ボード ＆ 家を出るべき時間ウィジェット -->
@@ -209,13 +235,13 @@
                 </div>
             </div>
 
-            <!-- ================= 3. 大学時間割画面 ================= -->
+            <!-- ================= 3. 大学時間割画面 (2コマ連続対応) ================= -->
             <div id="tab-univ" class="space-y-6 hidden">
                 <div class="bg-slate-800 border-2 border-slate-700 rounded-2xl p-6 shadow-xl space-y-6">
                     <div class="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-slate-700 pb-4">
                         <div>
-                            <h2 class="text-xl font-black text-white flex items-center gap-2">🎓 大学時間割マネージャー</h2>
-                            <p class="text-xs text-slate-400 mt-1">前期・後期の時間割を設定すると、自動的にカレンダーと出発リミットに同期されます。</p>
+                            <h2 class="text-xl font-black text-white flex items-center gap-2">🎓 大学時間割マネージャー (2コマ連続対応)</h2>
+                            <p class="text-xs text-slate-400 mt-1">前期・後期の時間割設定。2コマ連続の授業も指定可能です。</p>
                         </div>
                         <div class="flex bg-slate-900 p-1.5 rounded-2xl border border-slate-700">
                             <button onclick="setUnivSemester('zenki')" id="univ-sem-zenki" class="px-5 py-2 rounded-xl text-sm font-black transition bg-amber-600 text-slate-950 shadow">前期 (4月〜9月)</button>
@@ -227,7 +253,7 @@
                         <table class="w-full text-center border-collapse text-sm">
                             <thead>
                                 <tr class="bg-slate-900 text-xs font-black text-slate-400 uppercase border-b-2 border-slate-700">
-                                    <th class="py-3 px-2 w-24">時限 / 時間</th>
+                                    <th class="py-3 px-2 w-28">時限 / 時間</th>
                                     <th class="py-3 px-2">月曜</th>
                                     <th class="py-3 px-2">火曜</th>
                                     <th class="py-3 px-2">水曜</th>
@@ -588,6 +614,135 @@
         let currentUnivSemester = 'zenki';
         let currentTaskCategory = '動画編集';
 
+        // YouTube API 関連
+        let ytPlayer = null;
+        let ytApiReady = false;
+
+        function onYouTubeIframeAPIReady() {
+            ytApiReady = true;
+        }
+
+        function extractYouTubeId(urlOrId) {
+            if (!urlOrId) return '';
+            let videoId = urlOrId.trim();
+            if (videoId.includes('youtu.be/')) {
+                videoId = videoId.split('youtu.be/')[1].split('?')[0];
+            } else if (videoId.includes('youtube.com/watch?v=')) {
+                const urlParams = new URLSearchParams(new URL(videoId).search);
+                videoId = urlParams.get('v');
+            } else if (videoId.includes('youtube.com/embed/')) {
+                videoId = videoId.split('youtube.com/embed/')[1].split('?')[0];
+            }
+            return videoId;
+        }
+
+        function loadAndPlayYouTube(videoId, title) {
+            document.getElementById('yt-current-title').textContent = title || videoId;
+            document.getElementById('yt-status-badge').textContent = '再生中';
+            document.getElementById('yt-status-badge').className = 'text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold animate-pulse';
+
+            if (!ytApiReady) {
+                setTimeout(() => loadAndPlayYouTube(videoId, title), 500);
+                return;
+            }
+
+            const vol = document.getElementById('yt-volume-slider').value;
+
+            if (!ytPlayer) {
+                ytPlayer = new YT.Player('hidden-youtube-player', {
+                    height: '1',
+                    width: '1',
+                    videoId: videoId,
+                    playerVars: {
+                        'autoplay': 1,
+                        'controls': 0,
+                        'enablejsapi': 1,
+                        'loop': 1,
+                        'playlist': videoId
+                    },
+                    events: {
+                        'onReady': (event) => {
+                            event.target.setVolume(vol);
+                            event.target.playVideo();
+                        },
+                        'onError': (event) => {
+                            console.error('YT Error:', event.data);
+                            alert('YouTubeの再生に失敗しました（埋め込み制限等の可能性があります）。');
+                        }
+                    }
+                });
+            } else {
+                if (typeof ytPlayer.loadVideoById === 'function') {
+                    ytPlayer.loadVideoById(videoId);
+                    ytPlayer.setVolume(vol);
+                    ytPlayer.playVideo();
+                }
+            }
+        }
+
+        function playPresetYouTube(videoId, title) {
+            loadAndPlayYouTube(videoId, title);
+        }
+
+        function playCustomYouTube() {
+            const input = document.getElementById('youtube-url-input').value;
+            const videoId = extractYouTubeId(input);
+            if (!videoId) {
+                alert('有効なYouTubeのURLまたは動画IDを入力してください');
+                return;
+            }
+            loadAndPlayYouTube(videoId, input);
+        }
+
+        function pauseYouTube() {
+            if (ytPlayer && typeof ytPlayer.pauseVideo === 'function') {
+                ytPlayer.pauseVideo();
+                document.getElementById('yt-status-badge').textContent = '一時停止';
+                document.getElementById('yt-status-badge').className = 'text-xs bg-amber-500/20 text-amber-400 px-3 py-1 rounded-full font-bold';
+            }
+        }
+
+        function resumeYouTube() {
+            if (ytPlayer && typeof ytPlayer.playVideo === 'function') {
+                ytPlayer.playVideo();
+                document.getElementById('yt-status-badge').textContent = '再生中';
+                document.getElementById('yt-status-badge').className = 'text-xs bg-emerald-500/20 text-emerald-400 px-3 py-1 rounded-full font-bold animate-pulse';
+            }
+        }
+
+        function stopYouTube() {
+            if (ytPlayer && typeof ytPlayer.stopVideo === 'function') {
+                ytPlayer.stopVideo();
+                document.getElementById('yt-current-title').textContent = '楽曲未選択';
+                document.getElementById('yt-status-badge').textContent = '停止中';
+                document.getElementById('yt-status-badge').className = 'text-xs bg-slate-700 text-slate-300 px-3 py-1 rounded-full font-bold';
+            }
+        }
+
+        function changeYouTubeVolume(val) {
+            if (ytPlayer && typeof ytPlayer.setVolume === 'function') {
+                ytPlayer.setVolume(val);
+            }
+        }
+
+        // 大学時間割のマイグレーション（2コマ連続対応データ構造への変換）
+        function migrateUnivTimetable() {
+            ['zenki', 'kouki'].forEach(sem => {
+                if (!univTimetable[sem]) univTimetable[sem] = {};
+                for (let p = 1; p <= 5; p++) {
+                    if (!univTimetable[sem][p]) univTimetable[sem][p] = ["","","","",""];
+                    for (let d = 0; d < 5; d++) {
+                        let val = univTimetable[sem][p][d];
+                        if (typeof val === 'string') {
+                            univTimetable[sem][p][d] = { name: val, span: 1 };
+                        } else if (!val) {
+                            univTimetable[sem][p][d] = { name: '', span: 1 };
+                        }
+                    }
+                }
+            });
+        }
+
         function parseFormattedTime(num) {
             if (!num || isNaN(num)) return 0;
             const str = String(num);
@@ -602,6 +757,7 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            migrateUnivTimetable();
             const savedUser = localStorage.getItem('kk_username');
             if (savedUser) {
                 document.getElementById('display-username').textContent = savedUser;
@@ -620,34 +776,6 @@
             updateDepartureTimeWidget();
             renderUnivTimetableGrid();
         });
-
-        // YouTube BGM 再生関数 (新実装)
-        function playYouTubeBGM() {
-            const input = document.getElementById('youtube-url-input').value.trim();
-            let videoId = input;
-            if (input.includes('youtube.com/watch?v=')) {
-                const urlParams = new URLSearchParams(new URL(input).search);
-                videoId = urlParams.get('v');
-            } else if (input.includes('youtu.be/')) {
-                videoId = input.split('youtu.be/')[1].split('?')[0];
-            }
-            
-            if (!videoId) {
-                alert('有効なYouTubeのURLまたは動画IDを入力してください');
-                return;
-            }
-
-            const container = document.getElementById('youtube-player-container');
-            container.classList.remove('hidden');
-            container.innerHTML = `<iframe width="100%" height="90" src="https://www.youtube.com/embed/${videoId}?autoplay=1" frameborder="0" allow="autoplay"></iframe>`;
-        }
-
-        function stopYouTubeBGM() {
-            const container = document.getElementById('youtube-player-container');
-            container.innerHTML = '';
-            container.classList.add('hidden');
-            document.getElementById('youtube-url-input').value = '';
-        }
 
         function updateWorldClock() {
             const now = new Date();
@@ -776,6 +904,7 @@
         }
 
         function renderUnivTimetableGrid() {
+            migrateUnivTimetable();
             const tbody = document.getElementById('univ-timetable-body');
             tbody.innerHTML = '';
             const data = univTimetable[currentUnivSemester];
@@ -784,29 +913,59 @@
                 const info = classTimes[period];
                 let rowHtml = `<td class="py-3 px-2 font-mono text-xs text-amber-400 font-bold">${period}限<br><span class="text-[10px] text-slate-400">${info.start}~${info.end}</span></td>`;
                 for (let dayIdx = 0; dayIdx < 5; dayIdx++) {
-                    const val = data[period][dayIdx] || '';
-                    rowHtml += `
-                        <td class="py-2 px-1">
-                            <input type="text" value="${val}" data-period="${period}" data-day="${dayIdx}" placeholder="講義名" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-2 text-white text-xs text-center focus:border-amber-500 univ-input">
-                        </td>
-                    `;
+                    const cell = data[period][dayIdx] || { name: '', span: 1 };
+                    
+                    let isCoveredByPrevious = false;
+                    if (period > 1) {
+                        const prevCell = data[period - 1][dayIdx];
+                        if (prevCell && prevCell.span === 2) {
+                            isCoveredByPrevious = true;
+                        }
+                    }
+
+                    if (isCoveredByPrevious) {
+                        rowHtml += `
+                            <td class="py-2 px-1 bg-slate-950/40">
+                                <div class="text-[10px] text-amber-400/60 font-bold py-2">（2コマ連続中）</div>
+                            </td>
+                        `;
+                    } else {
+                        rowHtml += `
+                            <td class="py-2 px-1 space-y-1">
+                                <input type="text" value="${cell.name}" data-period="${period}" data-day="${dayIdx}" placeholder="講義名" class="w-full bg-slate-900 border border-slate-700 rounded-lg px-2 py-1.5 text-white text-xs text-center focus:border-amber-500 univ-name-input">
+                                <select data-period="${period}" data-day="${dayIdx}" class="w-full bg-slate-950 text-slate-300 text-[10px] rounded px-1 py-0.5 border border-slate-800 univ-span-select">
+                                    <option value="1" ${cell.span === 1 ? 'selected' : ''}>1コマ (90分)</option>
+                                    <option value="2" ${cell.span === 2 ? 'selected' : ''}>2コマ連続</option>
+                                </select>
+                            </td>
+                        `;
+                    }
                 }
                 tbody.innerHTML += `<tr>${rowHtml}</tr>`;
             }
         }
 
         function saveUnivTimetable() {
-            const inputs = document.querySelectorAll('.univ-input');
-            inputs.forEach(input => {
+            const nameInputs = document.querySelectorAll('.univ-name-input');
+            const data = univTimetable[currentUnivSemester];
+
+            nameInputs.forEach(input => {
                 const p = input.getAttribute('data-period');
                 const d = input.getAttribute('data-day');
-                univTimetable[currentUnivSemester][p][d] = input.value.trim();
+                const name = input.value.trim();
+                const select = document.querySelector(`.univ-span-select[data-period="${p}"][data-day="${d}"]`);
+                const span = select ? parseInt(select.value, 10) : 1;
+                
+                data[p][d] = { name, span };
             });
+
             saveData();
-            alert('大学時間割を保存し、カレンダーと同期しました！');
+            renderUnivTimetableGrid();
+            alert('大学時間割を保存し、カレンダーと出発リミットに同期しました！');
         }
 
         function updateDepartureTimeWidget() {
+            migrateUnivTimetable();
             const now = new Date();
             const m = now.getMonth() + 1;
             const isZenki = (m >= 4 && m <= 9);
@@ -818,16 +977,17 @@
             document.getElementById('home-today-date-label').textContent = `${now.getMonth() + 1}月${now.getDate()}日`;
 
             let earliestPeriod = null;
-            let className = "";
+            let classInfo = "";
 
             if (dayOfWeek >= 1 && dayOfWeek <= 5) {
                 const dayIdx = dayOfWeek - 1;
                 const timetable = univTimetable[semKey];
                 for (let p = 1; p <= 5; p++) {
-                    const cName = timetable[p][dayIdx];
-                    if (cName) {
+                    const cell = timetable[p][dayIdx];
+                    if (cell && cell.name) {
                         earliestPeriod = p;
-                        className = cName;
+                        const endTimePeriod = cell.span === 2 ? Math.min(5, p + 1) : p;
+                        classInfo = cell.span === 2 ? `${p}〜${endTimePeriod}限: ${cell.name} (${classTimes[p].start}〜${classTimes[endTimePeriod].end})` : `${p}限: ${cell.name} (${classTimes[p].start}開始)`;
                         break;
                     }
                 }
@@ -840,7 +1000,7 @@
             if (earliestPeriod !== null) {
                 const leaveTime = classTimes[earliestPeriod].leave;
                 depEl.textContent = `${leaveTime} までに出発`;
-                classEl.textContent = `${earliestPeriod}限: ${className} (${classTimes[earliestPeriod].start}開始)`;
+                classEl.textContent = classInfo;
             } else {
                 depEl.textContent = "出発リミットなし";
                 classEl.textContent = todayEvents.length > 0 ? todayEvents[0].title : "本日の講義・予定なし";
@@ -875,6 +1035,7 @@
         }
 
         function renderHome() {
+            migrateUnivTimetable();
             const now = new Date();
             const currentYm = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
             const selectedYear = document.getElementById('home-year-select')?.value || String(now.getFullYear());
@@ -928,15 +1089,25 @@
             if (dayOfWeek >= 1 && dayOfWeek <= 5) {
                 const dayIdx = dayOfWeek - 1;
                 const timetable = univTimetable[semKey];
+                let skipNext = false;
                 for (let p = 1; p <= 5; p++) {
-                    const cName = timetable[p][dayIdx];
-                    if (cName) {
+                    if (skipNext) {
+                        skipNext = false;
+                        continue;
+                    }
+                    const cell = timetable[p][dayIdx];
+                    if (cell && cell.name) {
+                        const endTimePeriod = cell.span === 2 ? Math.min(5, p + 1) : p;
+                        const timeStr = cell.span === 2 ? `${classTimes[p].start}〜${classTimes[endTimePeriod].end}` : classTimes[p].start;
+                        const labelRange = cell.span === 2 ? `${p}〜${endTimePeriod}限` : `${p}限`;
+
                         evContainer.innerHTML += `
                             <div class="bg-slate-900/80 p-3.5 rounded-xl border border-amber-500/30 flex justify-between items-center text-sm shadow">
-                                <span class="px-2.5 py-1 rounded-lg font-bold text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40">${p}限 (${classTimes[p].start})</span>
-                                <span class="text-white font-bold ml-3 flex-1">${cName}</span>
+                                <span class="px-2.5 py-1 rounded-lg font-bold text-xs bg-amber-500/20 text-amber-300 border border-amber-500/40">${labelRange} (${timeStr})</span>
+                                <span class="text-white font-bold ml-3 flex-1">${cell.name}</span>
                             </div>
                         `;
+                        if (cell.span === 2) skipNext = true;
                     }
                 }
             }
@@ -981,6 +1152,7 @@
         }
 
         function renderCalendar() {
+            migrateUnivTimetable();
             document.getElementById('calendar-title').textContent = `${currentYear}年 ${currentMonth + 1}月`;
             const grid = document.getElementById('calendar-grid');
             grid.innerHTML = '';
@@ -1004,10 +1176,17 @@
                     const semKey = (m >= 4 && m <= 9) ? 'zenki' : 'kouki';
                     const dayIdx = dayOfWeek - 1;
                     const timetable = univTimetable[semKey];
+                    let skipNext = false;
                     for (let p = 1; p <= 5; p++) {
-                        const cName = timetable[p][dayIdx];
-                        if (cName) {
-                            univEventsHtml += `<div class="text-[10px] px-1.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 font-bold mb-0.5 truncate">${p}限: ${cName}</div>`;
+                        if (skipNext) {
+                            skipNext = false;
+                            continue;
+                        }
+                        const cell = timetable[p][dayIdx];
+                        if (cell && cell.name) {
+                            const label = cell.span === 2 ? `${p}〜${p+1}限: ${cell.name}` : `${p}限: ${cell.name}`;
+                            univEventsHtml += `<div class="text-[10px] px-1.5 py-0.5 rounded-lg bg-amber-500/20 text-amber-300 font-bold mb-0.5 truncate">${label}</div>`;
+                            if (cell.span === 2) skipNext = true;
                         }
                     }
                 }
